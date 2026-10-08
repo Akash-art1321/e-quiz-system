@@ -1,0 +1,850 @@
+/* ==========================================================================
+   QuizNest 3D & Modern UI Enhancement System
+   High-Fidelity 3D Transforms, Glassmorphism, Tactile Controls, and Ambient Depth
+   ========================================================================== */
+
+/* 1. Global 3D Perspective & Root Enhancements */
+:root {
+  --perspective-3d: 1200px;
+  --glass-bg: rgba(20, 27, 45, 0.78);
+  --glass-bg-hover: rgba(27, 35, 56, 0.88);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-border-hover: rgba(124, 134, 255, 0.4);
+  --card-3d-shadow: 0 20px 45px -12px rgba(0, 0, 0, 0.55), 0 1px 0 rgba(255, 255, 255, 0.12) inset;
+  --card-3d-hover-shadow: 0 30px 60px -15px rgba(79, 91, 255, 0.4), 0 0 0 1px rgba(124, 134, 255, 0.35) inset;
+  --btn-3d-primary: #333cb9;
+  --btn-3d-success: #15803d;
+  --btn-3d-danger: #b91c1c;
+  --btn-3d-secondary: rgba(0, 0, 0, 0.25);
+  --neon-indigo: #6366f1;
+  --neon-emerald: #10b981;
+  --neon-amber: #f59e0b;
+}
+
+html[data-theme="light"] {
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-bg-hover: rgba(255, 255, 255, 0.98);
+  --glass-border: rgba(20, 26, 46, 0.08);
+  --glass-border-hover: rgba(79, 91, 255, 0.35);
+  --card-3d-shadow: 0 20px 40px -12px rgba(20, 26, 46, 0.1), 0 1px 0 rgba(255, 255, 255, 0.8) inset;
+  --card-3d-hover-shadow: 0 28px 55px -12px rgba(79, 91, 255, 0.22), 0 0 0 1px rgba(79, 91, 255, 0.25) inset;
+  --btn-3d-primary: #3842c2;
+  --btn-3d-success: #166534;
+  --btn-3d-danger: #991b1b;
+  --btn-3d-secondary: rgba(0, 0, 0, 0.08);
+}
+
+/* 2. 3D Ambient Space, Floating Spheres & Futuristic Grid Plane */
+.ambient-3d-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+  contain: paint;
+}
+
+.ambient-3d-bg .orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(85px);
+  opacity: 0.38;
+  will-change: transform;
+}
+
+.ambient-3d-bg .orb-1 {
+  width: 520px;
+  height: 520px;
+  background: radial-gradient(circle, #4f5bff 0%, rgba(79, 91, 255, 0) 70%);
+  top: -120px;
+  right: -80px;
+  animation: floatOrb1 22s ease-in-out infinite alternate;
+}
+
+.ambient-3d-bg .orb-2 {
+  width: 460px;
+  height: 460px;
+  background: radial-gradient(circle, #ec4899 0%, rgba(236, 72, 153, 0) 70%);
+  bottom: -60px;
+  left: -80px;
+  animation: floatOrb2 26s ease-in-out infinite alternate;
+}
+
+.ambient-3d-bg .orb-3 {
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(circle, #10b981 0%, rgba(16, 185, 129, 0) 70%);
+  top: 45%;
+  left: 35%;
+  animation: floatOrb3 20s ease-in-out infinite alternate;
+}
+
+@keyframes floatOrb1 {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(-100px, 80px, 0) scale(1.15); }
+  100% { transform: translate3d(40px, 140px, 0) scale(0.9); }
+}
+
+@keyframes floatOrb2 {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(120px, -90px, 0) scale(1.1); }
+  100% { transform: translate3d(-50px, -140px, 0) scale(0.95); }
+}
+
+@keyframes floatOrb3 {
+  0% { transform: translate3d(0, 0, 0) scale(0.85); opacity: 0.25; }
+  50% { transform: translate3d(-80px, -60px, 0) scale(1.2); opacity: 0.45; }
+  100% { transform: translate3d(90px, 70px, 0) scale(0.9); opacity: 0.3; }
+}
+
+/* 3D Isometric Floor Grid */
+.grid-3d-floor {
+  position: fixed;
+  bottom: -180px;
+  left: 0;
+  width: 100%;
+  height: 520px;
+  background-image:
+    linear-gradient(rgba(79, 91, 255, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(79, 91, 255, 0.12) 1px, transparent 1px);
+  background-size: 55px 55px;
+  transform: perspective(600px) rotateX(68deg);
+  transform-origin: center bottom;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.55;
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0) 80%);
+  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0) 80%);
+}
+
+/* Ensure app contents render in front of 3D background */
+#views, #topnav, footer {
+  position: relative;
+  z-index: 1;
+}
+
+/* Modals must ALWAYS be centered fixed overlays on top of all 3D content */
+.modal-overlay,
+.modal-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 99999 !important;
+  background: rgba(0, 0, 0, 0.72) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal-overlay.active,
+.modal-backdrop.active {
+  display: flex !important;
+}
+
+/* 3. Modern Glassmorphism & 3D Interactive Cards */
+.card,
+.sim-card,
+.quiz-card,
+.metric-card,
+.role-card-content,
+.hero-demo-box,
+.student-sidebar {
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(18px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(180%) !important;
+  border: 1px solid var(--glass-border) !important;
+  box-shadow: var(--card-3d-shadow) !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.card:hover {
+  border-color: var(--glass-border-hover) !important;
+  box-shadow: var(--card-3d-hover-shadow) !important;
+}
+
+/* Dynamic Specular Sheen for 3D Cards */
+.card::after,
+.sim-card::after,
+.quiz-card::after,
+.metric-card::after,
+.role-card-content::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.12) 0%, transparent 65%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  z-index: 2;
+}
+
+.card:hover::after,
+.sim-card:hover::after,
+.quiz-card:hover::after,
+.metric-card:hover::after,
+.role-card-content:hover::after {
+  opacity: 1;
+}
+
+/* 4. Physical 3D Tactile Buttons */
+.btn {
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-bottom: 3.5px solid var(--btn-3d-primary) !important;
+  box-shadow: 0 4px 0 var(--btn-3d-primary), 0 8px 20px rgba(79, 91, 255, 0.35) !important;
+  transform: translateY(0);
+  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.15s ease !important;
+  position: relative;
+  user-select: none;
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-2.5px) !important;
+  box-shadow: 0 6.5px 0 var(--btn-3d-primary), 0 12px 28px rgba(79, 91, 255, 0.5) !important;
+  filter: brightness(1.08) !important;
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(3.5px) !important;
+  box-shadow: 0 0.5px 0 var(--btn-3d-primary), 0 3px 8px rgba(79, 91, 255, 0.25) !important;
+}
+
+/* 3D Success Buttons */
+.btn.success {
+  border-bottom-color: var(--btn-3d-success) !important;
+  box-shadow: 0 4px 0 var(--btn-3d-success), 0 8px 20px rgba(34, 197, 94, 0.35) !important;
+}
+.btn.success:hover:not(:disabled) {
+  box-shadow: 0 6.5px 0 var(--btn-3d-success), 0 12px 28px rgba(34, 197, 94, 0.5) !important;
+}
+.btn.success:active:not(:disabled) {
+  box-shadow: 0 0.5px 0 var(--btn-3d-success), 0 3px 8px rgba(34, 197, 94, 0.25) !important;
+}
+
+/* 3D Danger Buttons */
+.btn.danger {
+  border-bottom-color: var(--btn-3d-danger) !important;
+  box-shadow: 0 4px 0 var(--btn-3d-danger), 0 8px 20px rgba(239, 68, 68, 0.35) !important;
+}
+.btn.danger:hover:not(:disabled) {
+  box-shadow: 0 6.5px 0 var(--btn-3d-danger), 0 12px 28px rgba(239, 68, 68, 0.5) !important;
+}
+.btn.danger:active:not(:disabled) {
+  box-shadow: 0 0.5px 0 var(--btn-3d-danger), 0 3px 8px rgba(239, 68, 68, 0.25) !important;
+}
+
+/* 3D Secondary Buttons */
+.btn.secondary {
+  background: var(--surface-2) !important;
+  border-color: var(--border) !important;
+  border-bottom: 3.5px solid var(--border) !important;
+  box-shadow: 0 3.5px 0 rgba(0, 0, 0, 0.25), 0 6px 14px rgba(0, 0, 0, 0.15) !important;
+}
+.btn.secondary:hover:not(:disabled) {
+  border-color: var(--primary) !important;
+  border-bottom-color: var(--primary) !important;
+  box-shadow: 0 5.5px 0 var(--primary), 0 10px 22px rgba(79, 91, 255, 0.25) !important;
+}
+.btn.secondary:active:not(:disabled) {
+  box-shadow: 0 0.5px 0 var(--border), 0 2px 6px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* 3D Glow Special Buttons */
+.btn-glow {
+  background: linear-gradient(135deg, #4f5bff 0%, #7c86ff 100%) !important;
+  box-shadow: 0 5px 0 #333cb9, 0 10px 30px rgba(79, 91, 255, 0.6) !important;
+}
+.btn-glow:hover:not(:disabled) {
+  box-shadow: 0 7.5px 0 #333cb9, 0 16px 40px rgba(79, 91, 255, 0.75) !important;
+}
+
+/* 5. 3D Interactive Hero & Badges */
+.hero-title {
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+}
+
+.hero-status-pill {
+  box-shadow: 0 4px 14px -4px rgba(79, 91, 255, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.hero-status-pill:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px -4px rgba(79, 91, 255, 0.45) !important;
+}
+
+.demo-chip {
+  box-shadow: 0 3px 0 var(--border), 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+.demo-chip:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 5px 0 var(--primary), 0 8px 20px rgba(79, 91, 255, 0.35) !important;
+  border-color: var(--primary) !important;
+}
+
+/* 6. Modern Interactive Exam Simulator (Landing Page) */
+.sim-container {
+  /* Clean stable container */
+}
+
+.sim-card {
+  border: 1.5px solid var(--glass-border) !important;
+  box-shadow: 0 18px 45px -10px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.08) inset !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease !important;
+}
+
+.sim-card:hover {
+  transform: translateY(-2px) !important;
+  border-color: var(--glass-border-hover) !important;
+  box-shadow: 0 24px 55px -12px rgba(79, 91, 255, 0.3), 0 0 0 1px rgba(124, 134, 255, 0.25) inset !important;
+}
+
+.sim-timer-pill {
+  box-shadow: 0 4px 12px rgba(245, 165, 36, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  animation: pulseTimer3d 2s infinite ease-in-out;
+}
+
+@keyframes pulseTimer3d {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); box-shadow: 0 6px 18px rgba(245, 165, 36, 0.35); }
+}
+
+/* 3D Option Cards */
+.sim-opt-card,
+.opt-choice {
+  background: var(--surface-2) !important;
+  border: 1.5px solid var(--border) !important;
+  border-bottom: 3.5px solid var(--border) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.sim-opt-card:hover,
+.opt-choice:hover {
+  transform: translateY(-2px) !important;
+  border-color: var(--primary) !important;
+  border-bottom-color: var(--primary) !important;
+  box-shadow: 0 8px 20px rgba(79, 91, 255, 0.25) !important;
+  background: rgba(79, 91, 255, 0.1) !important;
+}
+
+.sim-opt-card.selected,
+.opt-choice.selected {
+  border-color: var(--primary) !important;
+  border-bottom: 3.5px solid var(--primary) !important;
+  background: rgba(79, 91, 255, 0.18) !important;
+  box-shadow: 0 0 0 2px var(--primary), 0 8px 24px rgba(79, 91, 255, 0.35) !important;
+  transform: translateY(-1px) !important;
+}
+
+.sim-opt-card.correct {
+  border-color: var(--success) !important;
+  border-bottom-color: var(--success) !important;
+  background: rgba(34, 197, 94, 0.18) !important;
+  box-shadow: 0 0 0 2px var(--success), 0 8px 24px rgba(34, 197, 94, 0.35) !important;
+}
+
+.sim-opt-card.wrong {
+  border-color: var(--danger) !important;
+  border-bottom-color: var(--danger) !important;
+  background: rgba(239, 68, 68, 0.18) !important;
+  box-shadow: 0 0 0 2px var(--danger), 0 8px 24px rgba(239, 68, 68, 0.35) !important;
+}
+
+.sim-opt-letter,
+.opt-letter {
+  box-shadow: 0 2.5px 0 rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+  font-weight: 800 !important;
+  transition: all 0.2s ease;
+}
+
+.sim-opt-card:hover .sim-opt-letter,
+.opt-choice:hover .opt-letter {
+  background: var(--primary) !important;
+  color: #fff !important;
+  border-color: var(--primary-2) !important;
+}
+
+/* 7. Stable Metrics Strip & Interactive Stat Cards */
+.metric-card,
+.stat-card,
+.stat-row .stat {
+  border-bottom: 3.5px solid var(--border) !important;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease !important;
+  cursor: pointer;
+  position: relative;
+}
+
+.metric-card:hover,
+.stat-card:hover,
+.stat-row .stat:hover {
+  transform: translateY(-3px) !important;
+  border-color: var(--primary) !important;
+  border-bottom-color: var(--primary) !important;
+  box-shadow: 0 12px 28px rgba(79, 91, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+}
+
+.stat-row .stat:active {
+  transform: translateY(1px) !important;
+}
+
+.stat-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: rgba(79, 91, 255, 0.15);
+  color: var(--primary-2);
+}
+
+.stat-badge.danger {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--danger);
+}
+
+.stat-badge.warning {
+  background: rgba(245, 165, 36, 0.15);
+  color: var(--accent);
+}
+
+.stat-link-hint {
+  font-size: 11px;
+  color: var(--primary-2);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+.metric-val,
+.stat-val {
+  background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #94a3b8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
+}
+
+html[data-theme="light"] .metric-val,
+html[data-theme="light"] .stat-val {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* 8. Stable Interactive Quiz Cards (Student Dashboard) */
+.quiz-card {
+  border-bottom: 4px solid var(--border) !important;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.quiz-card:hover {
+  transform: translateY(-3px) !important;
+  border-color: var(--primary) !important;
+  border-bottom-color: var(--primary) !important;
+  box-shadow: 0 16px 36px -8px rgba(79, 91, 255, 0.28) !important;
+}
+
+/* 9. 3D Question Navigation Palette (Exam Interface) */
+.qnav-grid {
+  perspective: 800px;
+}
+
+.qnav-btn {
+  background: var(--surface-2) !important;
+  border: 1px solid var(--border) !important;
+  border-bottom: 3.5px solid var(--border) !important;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  transform: translateY(0);
+  transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  font-weight: 700 !important;
+  border-radius: 9px !important;
+}
+
+.qnav-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 5px 0 rgba(0, 0, 0, 0.4), 0 6px 16px rgba(79, 91, 255, 0.25) !important;
+  border-color: var(--primary) !important;
+}
+
+.qnav-btn:active {
+  transform: translateY(2px) !important;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Answered = 3D Emerald */
+.qnav-btn.answered {
+  background: var(--success) !important;
+  color: #04140a !important;
+  border-color: var(--success) !important;
+  border-bottom-color: #15803d !important;
+  box-shadow: 0 3.5px 0 #15803d, 0 6px 16px rgba(34, 197, 94, 0.4) !important;
+}
+
+/* Marked for Review = 3D Amber */
+.qnav-btn.review {
+  background: var(--accent) !important;
+  color: #1c1002 !important;
+  border-color: var(--accent) !important;
+  border-bottom-color: #b45309 !important;
+  box-shadow: 0 3.5px 0 #b45309, 0 6px 16px rgba(245, 165, 36, 0.4) !important;
+}
+
+/* Current Question = 3D Electric Indigo with Halo */
+.qnav-btn.current {
+  border-color: #fff !important;
+  border-bottom-color: #333cb9 !important;
+  box-shadow: 0 3.5px 0 #333cb9, 0 0 0 2px var(--primary), 0 8px 24px rgba(79, 91, 255, 0.6) !important;
+  animation: currentPulse 2s infinite ease-in-out;
+}
+
+@keyframes currentPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); box-shadow: 0 4px 0 #333cb9, 0 0 0 3px var(--primary-2), 0 10px 30px rgba(124, 134, 255, 0.7); }
+}
+
+/* 10. 3D Score Ring & Results HUD */
+.score-circle {
+  box-shadow: 0 20px 50px rgba(79, 91, 255, 0.35), inset 0 0 25px rgba(79, 91, 255, 0.25) !important;
+  transform: perspective(600px) translateZ(10px);
+  animation: floatRing3d 4s ease-in-out infinite alternate;
+}
+
+@keyframes floatRing3d {
+  0% { transform: perspective(600px) translateZ(8px) translateY(0); }
+  100% { transform: perspective(600px) translateZ(16px) translateY(-6px); }
+}
+
+/* 11. 3D Floating Status Radar for Admin Malpractice Surveillance */
+.radar-box-3d {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 10px auto;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0) 70%);
+  border: 1.5px solid rgba(16, 185, 129, 0.4);
+  box-shadow: 0 0 30px rgba(16, 185, 129, 0.25), inset 0 0 20px rgba(16, 185, 129, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.radar-sweep-beam {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, rgba(16, 185, 129, 0.4) 0deg, transparent 60deg, transparent 360deg);
+  animation: radarSpin 3.5s linear infinite;
+}
+
+@keyframes radarSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* 12. Floating 3D Navigation Bar */
+#topnav {
+  background: rgba(11, 18, 32, 0.82) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5) !important;
+}
+
+html[data-theme="light"] #topnav {
+  background: rgba(244, 246, 251, 0.88) !important;
+  border-bottom: 1px solid rgba(20, 26, 46, 0.08) !important;
+  box-shadow: 0 10px 30px -10px rgba(20, 26, 46, 0.1) !important;
+}
+
+/* 13. Responsive 3D Touch Tuning */
+@media (max-width: 768px) {
+  .grid-3d-floor {
+    display: none; /* Optimized for mobile CPU */
+  }
+  .card, .sim-card, .quiz-card {
+    transform: none !important; /* Smooth scrolling on mobile touch screens */
+  }
+}
+
+/* 14. 3D Left-Hand Side Navigation Architecture (Admin & Student) */
+.admin-dashboard-layout,
+.student-dashboard-layout {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 992px) {
+  .admin-dashboard-layout,
+  .student-dashboard-layout {
+    grid-template-columns: 1fr;
+  }
+  .admin-sidebar,
+  .student-sidebar-profile {
+    position: static !important;
+    max-height: none !important;
+    margin-bottom: 16px;
+  }
+}
+
+.admin-main-content,
+.student-main-content {
+  min-width: 0;
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.admin-sidebar,
+.student-sidebar-profile {
+  position: sticky;
+  top: 80px;
+  max-height: calc(100vh - 90px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}
+
+.admin-sidebar::-webkit-scrollbar,
+.student-sidebar-profile::-webkit-scrollbar {
+  width: 4px;
+}
+
+.admin-sidebar::-webkit-scrollbar-thumb,
+.student-sidebar-profile::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+/* Compact Student Mini-Profile Header in Unified Sidebar */
+.student-mini-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 6px 12px;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.student-photo-wrapper.mini {
+  width: 46px;
+  height: 46px;
+  margin: 0;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 2px solid var(--primary);
+  background: var(--surface-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(79, 91, 255, 0.3);
+}
+
+.student-avatar-fallback.mini {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.student-mini-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.student-side-name.mini {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 2px;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.student-mini-tags {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+
+.mini-id-tag {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 1px 6px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--primary-2);
+}
+
+.mini-badge {
+  font-size: 9.5px !important;
+  padding: 1px 5px !important;
+}
+
+.student-mini-college {
+  font-size: 11.5px;
+  color: var(--text-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-nav-card {
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(18px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(180%) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: 18px;
+  padding: 16px 14px;
+  box-shadow: var(--card-3d-shadow) !important;
+}
+
+.sidebar-nav-header {
+  padding: 4px 10px 10px;
+  border-bottom: 1px solid var(--glass-border);
+  margin-bottom: 10px;
+}
+
+.sidebar-title {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+}
+
+.side-nav-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.side-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-bottom: 3.5px solid var(--border);
+  border-radius: 12px;
+  color: var(--text-dim);
+  font-size: 13.5px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  position: relative;
+  user-select: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.side-nav-btn:hover {
+  color: var(--text);
+  background: color-mix(in srgb, var(--primary) 12%, var(--surface-2));
+  border-color: var(--primary);
+  border-bottom-color: var(--primary);
+  transform: translateX(4px);
+  box-shadow: 0 4px 14px rgba(79, 91, 255, 0.25);
+}
+
+.side-nav-btn.active {
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #4f5bff 0%, #6366f1 100%) !important;
+  border-color: #818cf8 !important;
+  border-bottom-color: #333cb9 !important;
+  box-shadow: 0 6px 20px rgba(79, 91, 255, 0.45) !important;
+  font-weight: 700 !important;
+  transform: translateX(6px) !important;
+}
+
+.side-nav-btn.active .nav-label {
+  color: #ffffff !important;
+}
+
+.side-nav-btn .nav-icon {
+  font-size: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  flex-shrink: 0;
+}
+
+.side-nav-btn .nav-label {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.side-nav-btn .nav-badge {
+  margin-left: auto;
+  font-size: 11px;
+  padding: 2px 7px;
+}
+
+.side-nav-btn.create-exam-btn {
+  border-left: 3.5px solid var(--accent) !important;
+}
+
+.side-nav-btn.create-exam-btn:hover {
+  border-color: var(--accent) !important;
+  border-bottom-color: #b45309 !important;
+}
+
+/* Inline Admin Form Card */
+.inline-admin-form {
+  animation: slideDownIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideDownIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Mobile adjustments */
+@media (max-width: 992px) {
+  .side-nav-menu {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 8px;
+  }
+  .side-nav-btn {
+    padding: 10px 12px;
+    font-size: 12.5px;
+    transform: none !important;
+  }
+  .side-nav-btn.active {
+    transform: none !important;
+  }
+}
+

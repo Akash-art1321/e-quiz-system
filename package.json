@@ -1,0 +1,33 @@
+{
+  "name": "quiznest-equiz-system",
+  "version": "2.0.0",
+  "description": "QuizNest – Production-ready, secure, modern online examination and quiz management system",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "db:init": "node src/db/seed.js",
+    "test": "node test/run-tests.js"
+  },
+  "keywords": [
+    "quiz",
+    "exam",
+    "education",
+    "online-test",
+    "sqlite"
+  ],
+  "author": "QuizNest Team",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^13.0.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "docx": "^9.8.1",
+    "dotenv": "^18.0.4",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.7.0",
+    "helmet": "^8.3.0",
+    "pdfkit": "^0.20.2",
+    "pptxgenjs": "^4.0.1"
+  }
+}

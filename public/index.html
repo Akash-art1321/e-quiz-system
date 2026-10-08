@@ -1,0 +1,1983 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>QuizNest – Online Examination & Quiz Management System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/app.css">
+  <link rel="stylesheet" href="/css/modern-3d.css">
+
+  <!-- Client-side PDF generation & reading libraries (loaded safely from CDN) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+  <!-- KaTeX for Mathematical & Chemical Equation Rendering (LaTeX) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+</head>
+<body>
+
+  <!-- Ambient 3D Animated Background & Isometric Floor Grid -->
+  <div class="ambient-3d-bg" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="grid-3d-floor"></div>
+  </div>
+
+  <!-- Top Navigation Bar -->
+  <nav id="topnav">
+    <div class="brand" onclick="App.checkAuth()">
+      <span class="dot"></span> QuizNest
+    </div>
+    <div id="navRight"></div>
+  </nav>
+
+  <!-- Notification Banner for Anti-Cheating -->
+  <div id="cheatBanner"></div>
+
+  <!-- Main Viewports Container -->
+  <main id="views">
+
+    <!-- ================= 1. REDESIGNED INTERACTIVE LANDING VIEW ================= -->
+    <section class="view active" id="view-landing">
+      
+      <!-- Hero Section -->
+      <div class="landing-hero">
+        <div class="hero-status-pill">
+          <span class="live-dot"></span>
+          <span>Institutional Proctoring Engine Online</span>
+          <span class="badge" style="background: rgba(79, 91, 255, 0.2); font-size: 11px;">v2.0 Verified</span>
+        </div>
+
+        <h1 class="hero-title">
+          Secure, Proctored & <span class="gradient-text">Automated Examinations</span>
+        </h1>
+
+        <p class="hero-desc">
+          The next-generation assessment platform engineered for colleges, universities, and coaching academies. Features server-side tamper-proof grading, real-time anti-cheating window tracking, automated negative marking, and instant institutional analytics.
+        </p>
+
+        <div class="hero-actions">
+          <button class="btn btn-glow" onclick="App.showView('view-auth')">
+            Enter Examination Portal
+          </button>
+          <button class="btn secondary" onclick="Landing.scrollToDemo()">
+            Try Live Interactive Demo
+          </button>
+        </div>
+
+        <!-- 1-Click Demo Credentials Quick Bar -->
+        <div class="hero-demo-box">
+          <span style="font-weight: 600; color: var(--text);">Instant Test Access:</span>
+          <div class="demo-chip" onclick="Landing.fillAndLogin('student')" title="Log in as Demo Student">
+            <span>Demo Student (STU2026001)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Interactive Exam Simulator Section -->
+      <div class="sim-container" id="interactiveDemo">
+        <div class="sim-header">
+          <div>
+            <h3 style="margin-bottom: 2px;">Interactive Examination Simulator</h3>
+            <p style="margin: 0; font-size: 13.5px;">Experience the candidate exam screen and anti-cheating guard in real-time:</p>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn ghost sm" onclick="Landing.resetSimDemo()">Reset Demo</button>
+          </div>
+        </div>
+
+        <div class="sim-card">
+          <div class="sim-topbar">
+            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+              <span class="badge" style="background: rgba(79, 91, 255, 0.15);">Sample Exam: CS-201 Data Structures</span>
+              <span style="color: var(--text-dim);">Marking: <b>+2.0 pts</b> / <b>−0.50 pts penalty</b></span>
+            </div>
+            <div class="sim-timer-pill">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              <span id="simTimerText">14:58</span>
+            </div>
+          </div>
+
+          <div class="sim-question-title">
+            Q1. Which data structure operates on a Last-In, First-Out (LIFO) principle and supports O(1) push and pop operations?
+          </div>
+
+          <div class="sim-options-grid">
+            <div class="sim-opt-card" data-opt="A" onclick="Landing.selectSimOption('A')">
+              <span class="sim-opt-letter">A</span>
+              <span>Queue (First-In, First-Out)</span>
+            </div>
+            <div class="sim-opt-card" data-opt="B" onclick="Landing.selectSimOption('B')">
+              <span class="sim-opt-letter">B</span>
+              <span>Stack (Last-In, First-Out)</span>
+            </div>
+            <div class="sim-opt-card" data-opt="C" onclick="Landing.selectSimOption('C')">
+              <span class="sim-opt-letter">C</span>
+              <span>Binary Search Tree</span>
+            </div>
+            <div class="sim-opt-card" data-opt="D" onclick="Landing.selectSimOption('D')">
+              <span class="sim-opt-letter">D</span>
+              <span>Hash Table</span>
+            </div>
+          </div>
+
+          <!-- Instant Feedback Banner -->
+          <div id="simFeedback" class="sim-feedback-box"></div>
+
+          <!-- Anti-Cheating Simulator Controls -->
+          <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 16px; margin-top: 8px; flex-wrap: wrap; gap: 10px;">
+            <span style="font-size: 13px; color: var(--text-dim);"><b>Anti-Cheating Guard:</b> Tab/Window switch surveillance</span>
+            <button class="btn secondary sm" onclick="Landing.simulateCheating()" style="border-color: rgba(245, 165, 36, 0.4); color: var(--accent);">
+              Test Tab-Switch Detector
+            </button>
+          </div>
+
+          <div id="simCheatAlert" class="sim-cheat-alert">
+            <span><b>Proctoring Alert:</b> Window/Tab switch detected! Exam instantly locked. Unblockable only by Administrator.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trust Metrics Ribbon -->
+      <div class="metrics-strip">
+        <div class="metric-card">
+          <div class="metric-val gradient-text">100%</div>
+          <div class="metric-label">Server-Side Grading</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-val">0</div>
+          <div class="metric-label">Client Answer Leaks</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-val" style="color: var(--accent);">0 Tolerance</div>
+          <div class="metric-label">Instant Proctor Lock</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-val" style="color: var(--accent);">99.98%</div>
+          <div class="metric-label">System Availability</div>
+        </div>
+      </div>
+
+      <!-- Role-Based Workspaces Switcher -->
+      <div class="role-showcase">
+        <div class="section-tag">Role-Based Workspaces</div>
+        <h3 class="section-title">Designed for Every Stakeholder</h3>
+
+        <div class="role-tabs">
+          <button class="role-tab-btn active" data-role="student" onclick="Landing.setRoleTab('student')">Students & Candidates</button>
+          <button class="role-tab-btn" data-role="examiner" onclick="Landing.setRoleTab('examiner')">Faculty & Examiners</button>
+          <button class="role-tab-btn" data-role="admin" onclick="Landing.setRoleTab('admin')">College Administrators</button>
+        </div>
+
+        <div id="roleCard_student" class="role-card-content">
+          <div class="flex-between">
+            <h4>Student Assessment Experience</h4>
+            <span class="badge success">Candidate Portal</span>
+          </div>
+          <p>Candidates log in securely with their auto-assigned Student ID to take scheduled examinations in a distraction-free, proctored environment.</p>
+          <div class="role-perks">
+            <div class="role-perk-item"><span class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--success);vertical-align:middle"><polyline points="20 6 9 17 4 12"></polyline></svg></span> <span><b>Zero Setup Required:</b> Institutional credentials provisioned directly by admin.</span></div>
+            <div class="role-perk-item"><span class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--success);vertical-align:middle"><polyline points="20 6 9 17 4 12"></polyline></svg></span> <span><b>Anti-Cheating Safeguards:</b> Clear visual warnings when switching windows or tabs.</span></div>
+            <div class="role-perk-item"><span class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--success);vertical-align:middle"><polyline points="20 6 9 17 4 12"></polyline></svg></span> <span><b>Step-by-Step Review:</b> Instant answer review with detailed explanations post-submission.</span></div>
+            <div class="role-perk-item"><span class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--success);vertical-align:middle"><polyline points="20 6 9 17 4 12"></polyline></svg></span> <span><b>Leaderboards & History:</b> Track overall rank, historical percentile, and average scores.</span></div>
+          </div>
+        </div>
+
+        <div id="roleCard_examiner" class="role-card-content" style="display: none;">
+          <div class="flex-between">
+            <h4>Faculty & Examiner Workspace</h4>
+            <span class="badge">Assessment Builder</span>
+          </div>
+          <p>Create examinations, manage question banks, configure negative marking penalties, and export question papers with confidential answer keys.</p>
+          <div class="role-perks">
+            <div class="role-perk-item"><span class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--success);vertical-align:middle"><polyline points="20 6 9 17 4 12"></polyline></svg></span> <span><b>Rich Exam Authoring:</b> Dynamic question builder with custom duration and per-question marks.</span></div>
+            <div class="role-perk-item"><span class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--success);vertical-align:middle"><polyline points="20 6 9 17 4 12"></polyline></svg></span> <span><b>Bulk Question Import:</b> Instant bulk ingestion from CSV and PDF examination papers.</span></div>
+            <div class="role-perk-item"><span class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--success);vertical-align:middle"><polyline points="20 6 9 17 4 12"></polyline></svg></span> <span><b>Printable PDF Export:</b> 1-click generation of student examination papers and confidential answer keys.</span></div>
+            <div class="role-perk-item"><span class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--success);vertical-align:middle"><polyline points="20 6 9 17 4 12"></polyline></svg></span> <span><b>Real-Time Analytics:</b> Score distribution bands, top performers, and category pass rates.</span></div>
+          </div>
+        </div>
+
+        <div id="roleCard_admin" class="role-card-content" style="display: none;">
+          <div class="flex-between">
+            <h4>College Administrator Control Center</h4>
+            <span class="badge warning">Institutional Governance</span>
+          </div>
+          <p>Centralized authority for student account provisioning, security policy enforcement, password reset approvals, and malpractice surveillance.</p>
+          <div class="role-perks">
+            <div class="role-perk-item"><span class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--success);vertical-align:middle"><polyline points="20 6 9 17 4 12"></polyline></svg></span> <span><b>Auto Student ID Generation:</b> Sequential institutional codes assigned automatically by system.</span></div>
+            <div class="role-perk-item"><span class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--success);vertical-align:middle"><polyline points="20 6 9 17 4 12"></polyline></svg></span> <span><b>Tamper-Proof Records:</b> Details entered by admin are permanently locked against student modification.</span></div>
+            <div class="role-perk-item"><span class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--success);vertical-align:middle"><polyline points="20 6 9 17 4 12"></polyline></svg></span> <span><b>Live Surveillance Console:</b> Real-time incident logs for tab switches and flagged attempts.</span></div>
+            <div class="role-perk-item"><span class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--success);vertical-align:middle"><polyline points="20 6 9 17 4 12"></polyline></svg></span> <span><b>Password Reset Queue:</b> Secure administrative approval workflow without public email enumeration.</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature Grid Section -->
+      <div class="features-section">
+        <div class="section-tag">Security & Engineering</div>
+        <h3 class="section-title">Built with Zero Compromise</h3>
+
+        <div class="features-grid">
+          <div class="feature-box">
+            <div class="feature-icon-wrap"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></div>
+            <h4>Anti-Cheating Proctoring</h4>
+            <p>Active window and tab-switch surveillance. Alerts examiners in real-time and immediately locks/blocks exams upon violation. Admin-only unblock authority.</p>
+          </div>
+          <div class="feature-box">
+            <div class="feature-icon-wrap"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg></div>
+            <h4>Server-Side Grading</h4>
+            <p>Answers and solutions are never sent to the browser during the exam. Submissions are graded exclusively on the server with exact fractional negative marking.</p>
+          </div>
+          <div class="feature-box">
+            <div class="feature-icon-wrap"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
+            <h4>Auto-Submit Timer</h4>
+            <p>Cloud-synchronized countdown prevents overtime. Upon timer expiration, current answers are saved and evaluated automatically.</p>
+          </div>
+          <div class="feature-box">
+            <div class="feature-icon-wrap"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><circle cx="8" cy="10" r="2"></circle><line x1="14" y1="9" x2="18" y2="9"></line><line x1="14" y1="13" x2="18" y2="13"></line><line x1="6" y1="16" x2="18" y2="16"></line></svg></div>
+            <h4>Auto Student ID</h4>
+            <p>Automatic generation of sequential institutional codes (e.g. STU2026001). Admins never need to manually format or enter codes.</p>
+          </div>
+          <div class="feature-box">
+            <div class="feature-icon-wrap"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></div>
+            <h4>Locked Academic Records</h4>
+            <p>Verified institutional details (Name, College, Roll No., Course) cannot be altered by students, ensuring strict audit integrity.</p>
+          </div>
+          <div class="feature-box">
+            <div class="feature-icon-wrap"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg></div>
+            <h4>Instant PDF Question Papers</h4>
+            <p>Generate clean, publication-ready PDF question papers along with confidential answer keys and explanations at any time.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive FAQ Accordion -->
+      <div class="faq-section">
+        <div style="text-align: center; margin-bottom: 24px;">
+          <div class="section-tag">Frequently Asked Questions</div>
+          <h3 style="font-size: 26px;">Got Questions? We Have Answers.</h3>
+        </div>
+
+        <div class="faq-item open">
+          <div class="faq-item-header">
+            <span>How does the Anti-Cheating tab switch surveillance work?</span>
+            <span class="faq-chevron">&#9660;</span>
+          </div>
+          <div class="faq-content">
+            QuizNest monitors browser visibility and window focus events. If a candidate minimizes the exam window, opens another tab, or switches to an external application, the exam is instantly paused and locked. The examiner surveillance console records the timestamp, violation type, and photo evidence. Only an administrator can review and unblock the candidate's exam.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-item-header">
+            <span>Can students see correct answers using browser developer tools?</span>
+            <span class="faq-chevron">▼</span>
+          </div>
+          <div class="faq-content">
+            <b>No, absolutely not.</b> QuizNest uses strict server-side answer shielding. The examination delivery API completely strips the <code>correct</code> option index and explanations from the payload. Scoring and grading occur exclusively on the server after submission.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-item-header">
+            <span>Can students change their personal or academic details?</span>
+            <span class="faq-chevron">▼</span>
+          </div>
+          <div class="faq-content">
+            Details entered by the institution administrator (Full Name, Student ID, College, Roll Number, Course, Academic Year) are locked official records. Any attempt to modify these fields is rejected with <b>HTTP 403 Forbidden</b>. Students can only update emergency contact numbers and profile photos.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-item-header">
+            <span>How does the single login portal work without role selectors?</span>
+            <span class="faq-chevron">▼</span>
+          </div>
+          <div class="faq-content">
+            QuizNest provides a single, unified login screen. The backend automatically queries both admin and student records securely, creates an HTTPOnly signed session, and seamlessly directs the user to their designated dashboard.
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Call to Action Card -->
+      <div class="card" style="max-width: 820px; margin: 40px auto 20px; text-align: center; padding: 40px 24px; background: linear-gradient(180deg, var(--surface) 0%, rgba(79, 91, 255, 0.08) 100%);">
+        <h2 style="font-size: clamp(24px, 4vw, 32px); margin-bottom: 12px;">Ready to conduct your next examination?</h2>
+        <p style="max-width: 580px; margin: 0 auto 24px;">Sign in to QuizNest with your institutional credentials or test the platform using our demo accounts.</p>
+        <button class="btn btn-glow" style="padding: 14px 34px; font-size: 16px;" onclick="App.showView('view-auth')">
+          Access Examination Portal Now →
+        </button>
+      </div>
+
+    </section>
+
+    <!-- ================= 2. REDESIGNED UNIFIED AUTH VIEW ================= -->
+    <section class="view" id="view-auth">
+      <div class="auth-panel">
+        
+        <!-- Header -->
+        <div style="text-align: center; margin-bottom: 22px;">
+          <div class="brand" style="justify-content: center; margin-bottom: 14px;">
+            <span class="dot"></span> QuizNest
+          </div>
+          <h2 style="font-size: 24px; margin-bottom: 6px;">Portal Authentication</h2>
+          <p style="font-size: 13.5px; margin: 0;">Sign in to access your proctored assessment workspace</p>
+        </div>
+
+        <div id="loginMsg" class="msg"></div>
+
+        <form id="loginForm" onsubmit="return Auth.handleLogin(event)">
+          <div class="field">
+            <label for="loginIdentifier">Student ID / Username / Email</label>
+            <input type="text" id="loginIdentifier" required autocomplete="username" placeholder="e.g. STU2026001 or admin" autofocus>
+          </div>
+
+          <div class="field">
+            <div class="flex-between" style="margin-bottom: 6px;">
+              <label for="loginPassword" style="margin: 0;">Password</label>
+              <a onclick="Auth.openForgotModal()" style="font-size: 12px; color: var(--primary-2);">Forgot password?</a>
+            </div>
+            <div class="password-field-wrap">
+              <input type="password" id="loginPassword" required autocomplete="current-password" placeholder="••••••••">
+              <button type="button" id="loginPassEyeBtn" class="password-toggle-btn" onclick="Landing.togglePasswordVisibility('loginPassword', 'loginPassEyeBtn')" title="Show password" aria-label="Show password"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-svg eye-closed" style="vertical-align:middle;display:inline-block;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg></button>
+            </div>
+          </div>
+
+          <button class="btn block btn-glow" type="submit" id="loginSubmitBtn" style="margin-top: 14px; padding: 12px;">
+            Login to QuizNest Portal
+          </button>
+        </form>
+
+        <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 12.5px; color: var(--text-dim); line-height: 1.5;">
+          <b>Institutional Policy:</b> Student accounts are provisioned exclusively by your college administrator. No public self-registration is allowed.
+        </div>
+
+        <div style="text-align: center; margin-top: 18px;">
+          <button class="btn ghost sm" onclick="App.showView('view-landing')">← Back to Overview & Interactive Demo</button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= 3. STUDENT DASHBOARD VIEW ================= -->
+    <section class="view" id="view-student-dash">
+      <div class="student-dashboard-layout">
+        
+        <!-- Persistent Unified Student Sidebar (Compact & User-Friendly) -->
+        <aside class="student-sidebar-profile">
+          <div class="sidebar-nav-card student-unified-nav-card">
+            
+            <!-- Compact Candidate Profile Header -->
+            <div class="student-mini-profile">
+              <div class="student-photo-wrapper mini">
+                <img id="stuSidePhoto" src="" alt="Student Profile" class="student-avatar-img" style="display: none;" />
+                <div id="stuSidePhotoFallback" class="student-avatar-fallback mini" style="display:flex;align-items:center;justify-content:center;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>
+              </div>
+              <div class="student-mini-info">
+                <h3 id="stuSideName" class="student-side-name mini">Candidate</h3>
+                <div class="student-mini-tags">
+                  <code id="stuSideId" class="mini-id-tag">STU2026001</code>
+                  <span class="badge success mini-badge">Verified</span>
+                </div>
+                <div class="student-mini-college" id="stuSideCollege">General</div>
+              </div>
+            </div>
+
+            <!-- Auxiliary metadata targets preserved for JS DOM continuity -->
+            <span id="stuSideRoll" style="display: none;">-</span>
+            <span id="stuSideCourse" style="display: none;">-</span>
+            <span id="stuSideFather" style="display: none;">-</span>
+            <span id="stuSideMother" style="display: none;">-</span>
+
+            <!-- Student Left-Hand Side Navigation -->
+            <div class="sidebar-nav-header" style="margin-top: 14px;">
+              <span class="sidebar-title">STUDENT PORTAL</span>
+            </div>
+            <nav class="side-nav-menu" id="studentSideNav">
+              <button class="side-nav-btn active" data-t="browse" onclick="Student.setTab('browse')">
+                <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg></span>
+                <span class="nav-label">Available Exams</span>
+              </button>
+              <button class="side-nav-btn" data-t="history" onclick="Student.setTab('history')">
+                <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg></span>
+                <span class="nav-label">My Exam History</span>
+              </button>
+              <button class="side-nav-btn" data-t="leader" onclick="Student.setTab('leader')">
+                <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path></svg></span>
+                <span class="nav-label">Leaderboards</span>
+              </button>
+              <button class="side-nav-btn" data-t="profile" onclick="Student.setTab('profile')">
+                <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span>
+                <span class="nav-label">My Profile &amp; Records</span>
+              </button>
+            </nav>
+          </div>
+        </aside>
+
+        <!-- Main Student Workspace -->
+        <div class="student-main-content">
+          <div class="dash-head" style="margin-bottom: 16px;">
+            <div>
+              <h2 id="stuWelcome" style="margin-bottom: 4px;">Welcome</h2>
+              <p id="stuSubWelcome" style="margin: 0; color: var(--text-dim);"></p>
+            </div>
+          </div>
+
+          <!-- Hidden legacy horizontal tabs for accessibility and backward compatibility -->
+          <div class="tabs hidden" aria-hidden="true">
+            <button class="active" data-t="browse" onclick="Student.setTab('browse')">Available Examinations</button>
+            <button data-t="history" onclick="Student.setTab('history')">My History</button>
+            <button data-t="leader" onclick="Student.setTab('leader')">Leaderboards</button>
+            <button data-t="profile" onclick="Student.setTab('profile')">My Profile</button>
+          </div>
+
+          <!-- Tab: Browse Quizzes -->
+          <div id="stuTabBrowse">
+            <div class="toolbar">
+              <input class="grow" placeholder="Search by examination title or topic…" id="stuSearch" oninput="Student.renderQuizzes()">
+              <select id="stuCategoryFilter" onchange="Student.renderQuizzes()">
+                <option value="">All categories</option>
+              </select>
+            </div>
+            <div class="quiz-grid" id="stuQuizGrid"></div>
+          </div>
+
+          <!-- Tab: Attempt History -->
+          <div id="stuTabHistory" class="hidden">
+            <div class="table-wrap">
+              <table id="stuHistoryTable">
+                <thead>
+                  <tr>
+                    <th>Examination</th>
+                    <th>Score</th>
+                    <th>Percentage</th>
+                    <th>Time Taken</th>
+                    <th>Cheating Flags</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Tab: Leaderboard -->
+          <div id="stuTabLeader" class="hidden">
+            <div class="field" style="max-width: 360px">
+              <label>Select Examination</label>
+              <select id="stuLeaderQuizSelect" onchange="Student.renderLeaderboard()"></select>
+            </div>
+            <div class="table-wrap">
+              <table id="stuLeaderTable">
+                <thead>
+                  <tr>
+                    <th>Rank</th>
+                    <th>Student</th>
+                    <th>Score</th>
+                    <th>Percentage</th>
+                    <th>Time Taken</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Tab: Student Profile -->
+          <div id="stuTabProfile" class="hidden">
+            <div class="card" style="max-width: 680px; margin: 0 auto">
+              <div class="flex-between" style="margin-bottom: 16px">
+                <h3>Student Profile &amp; Identity</h3>
+                <button class="btn secondary sm" onclick="App.showModal('changePassModal')">Change Password</button>
+              </div>
+              
+              <div style="background: rgba(79, 91, 255, 0.08); border: 1px solid rgba(79, 91, 255, 0.25); border-radius: 10px; padding: 12px 16px; margin-bottom: 18px; font-size: 13px; color: var(--text-dim); line-height: 1.5">
+                <b>Official Academic Record:</b> Details entered by the administrator (Name, Student ID, College, Roll Number, Course, Year) are locked against modification. You can upload your profile photograph, update parents' names, and manage your contact details below.
+              </div>
+
+              <!-- Profile Photo Upload Card -->
+              <div class="profile-photo-upload-wrap">
+                <div class="prof-photo-circle">
+                  <img id="profPhotoPreview" src="" alt="Profile Photo" style="display: none;" />
+                  <div id="profPhotoFallback" style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:var(--text-dim);"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>
+                </div>
+                <div>
+                  <h4 style="margin: 0 0 4px;">Profile Photograph</h4>
+                  <p style="margin: 0 0 10px; font-size: 12.5px; color: var(--text-dim);">Passport-style photo displayed on your examination identity card.</p>
+                  <input type="file" id="profPhotoFileInput" accept="image/jpeg,image/png,image/webp" style="display: none;" onchange="Student.handlePhotoUpload(event)">
+                  <button type="button" class="btn secondary sm" onclick="document.getElementById('profPhotoFileInput').click()">Upload Photo</button>
+                  <button type="button" class="btn ghost sm" id="profRemovePhotoBtn" style="display: none; margin-left: 6px;" onclick="Student.removePhoto()">Remove</button>
+                </div>
+              </div>
+
+              <div id="profMsg" class="msg"></div>
+              <form onsubmit="return Student.handleProfileSave(event)">
+                <div class="grid-2">
+                  <div class="field">
+                    <label>Student ID (Official)</label>
+                    <input id="profStudentId" readonly disabled style="opacity: 0.75; cursor: not-allowed; background: var(--surface)">
+                    <div class="field-hint">Institutional ID assigned by administrator</div>
+                  </div>
+                  <div class="field">
+                    <label>Full Name (Official)</label>
+                    <input id="profName" readonly disabled style="opacity: 0.75; cursor: not-allowed; background: var(--surface)">
+                    <div class="field-hint">Verified candidate name</div>
+                  </div>
+                </div>
+
+                <div class="grid-2">
+                  <div class="field">
+                    <label for="profFatherName">Father's Name (Editable)</label>
+                    <input type="text" id="profFatherName" placeholder="Enter father's full name">
+                    <div class="field-hint">Parent name for institutional records</div>
+                  </div>
+                  <div class="field">
+                    <label for="profMotherName">Mother's Name (Editable)</label>
+                    <input type="text" id="profMotherName" placeholder="Enter mother's full name">
+                    <div class="field-hint">Parent name for institutional records</div>
+                  </div>
+                </div>
+
+                <div class="grid-2">
+                  <div class="field">
+                    <label id="profEmailLabel">Email Address</label>
+                    <input type="email" id="profEmail" placeholder="you@example.com">
+                    <div class="field-hint" id="profEmailHint">Registered email address</div>
+                  </div>
+                  <div class="field">
+                    <label>Phone Number (Editable)</label>
+                    <input type="tel" id="profPhone" placeholder="Enter mobile number">
+                    <div class="field-hint">Contact phone for emergency exam notices</div>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label>College / Institution (Official)</label>
+                  <input id="profCollege" readonly disabled style="opacity: 0.75; cursor: not-allowed; background: var(--surface)">
+                  <div class="field-hint">Enrolled institution</div>
+                </div>
+
+                <div class="grid-2">
+                  <div class="field">
+                    <label>Roll Number / Registration No. (Official)</label>
+                    <input id="profRoll" readonly disabled style="opacity: 0.75; cursor: not-allowed; background: var(--surface)">
+                  </div>
+                  <div class="field">
+                    <label>Year of Study (Official)</label>
+                    <input id="profYear" readonly disabled style="opacity: 0.75; cursor: not-allowed; background: var(--surface)">
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label>Course / Degree Program (Official)</label>
+                  <input id="profCourse" readonly disabled style="opacity: 0.75; cursor: not-allowed; background: var(--surface)">
+                </div>
+
+                <button class="btn" type="submit" style="margin-top: 10px">Save Profile &amp; Contact Details</button>
+              </form>
+            </div>
+          </div>
+
+        </div><!-- /.student-main-content -->
+      </div><!-- /.student-dashboard-layout -->
+    </section>
+
+    <!-- ================= 4. QUIZ INSTRUCTIONS VIEW ================= -->
+    <section class="view" id="view-instructions">
+      <div class="card" style="max-width: 680px; margin: 24px auto">
+        <span class="badge" id="instrCategory">General</span>
+        <h2 id="instrTitle" style="margin-top: 10px">Exam Title</h2>
+        <div class="qmeta" id="instrMeta"></div>
+
+        <h4 style="margin-top: 24px">Candidate Instructions & Proctoring Guidelines</h4>
+        <ul class="instr-list" id="instrList" style="padding-left: 20px; line-height: 1.6"></ul>
+
+        <div id="instrCustomWrap" class="hidden" style="margin-top: 16px; padding: 14px; background: var(--surface-2); border-radius: 10px">
+          <h4 style="margin: 0 0 6px">Instructions from Examiner:</h4>
+          <p id="instrCustom" style="white-space: pre-wrap; margin: 0"></p>
+        </div>
+
+        <label style="display: flex; align-items: flex-start; gap: 12px; margin: 22px 0 16px; cursor: pointer">
+          <input type="checkbox" id="instrAgree" style="width: auto; margin-top: 3px" onchange="document.getElementById('instrStartBtn').disabled = !this.checked">
+          <span style="font-size: 13.5px; color: var(--text-dim)">I confirm that I am the registered candidate and agree to adhere to the examination rules and anti-cheating regulations.</span>
+        </label>
+
+        <div class="flex-between">
+          <button class="btn secondary" onclick="App.showView('view-student-dash')">← Back to Dashboard</button>
+          <button class="btn success" id="instrStartBtn" disabled onclick="Quiz.startExam()">Begin Examination →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 5. TIMED ATTEMPT VIEW ================= -->
+    <section class="view" id="view-attempt">
+      <div class="flex-between" style="margin-bottom: 8px">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <h2 id="attemptTitle" style="margin: 0">Examination</h2>
+          <span id="attemptKioskBadge" class="badge ok" style="display:none; font-size: 11px;">Kiosk Fullscreen</span>
+          <span id="attemptCameraBadge" class="badge ok" style="display:none; font-size: 11px;">Camera Active</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div class="timer" id="attemptTimer">00:00</div>
+        </div>
+      </div>
+      <div class="progress-bar"><div id="attemptProgress" style="width: 0%"></div></div>
+
+      <!-- Upload Grace Period Alert Banner -->
+      <div id="attemptUploadBufferBanner" style="display: none; background: rgba(245, 158, 11, 0.15); border: 1.5px solid #f59e0b; color: #f59e0b; border-radius: 10px; padding: 12px 16px; margin: 12px 0; font-size: 13.5px; font-weight: 600;">
+        Exam Time Finished! Copy Upload Grace Window is ACTIVE: You have <span id="uploadBufferRemaining">05:00</span> to scan and upload your handwritten answer sheets before final submission.
+      </div>
+
+      <div class="attempt-wrap">
+        <div class="card">
+          <div class="flex-between">
+            <div class="badge" id="attemptQNum">Question 1</div>
+            <span class="badge" id="attemptQMarks" style="display:none; font-size: 11px;">1 Mark</span>
+          </div>
+
+          <!-- Question Diagram / Image Box -->
+          <div id="attemptQDiagramWrap" style="display:none; margin: 14px 0; text-align: center; background: var(--surface-2); padding: 10px; border-radius: 10px;">
+            <img id="attemptQDiagramImg" src="" alt="Question Diagram" style="max-width: 100%; max-height: 280px; border-radius: 8px; border: 1px solid var(--border);" />
+          </div>
+
+          <h3 id="attemptQText" style="margin-top: 14px; line-height: 1.45"></h3>
+
+          <!-- MCQ Options Container -->
+          <div id="attemptOptions" style="margin-top: 18px"></div>
+
+          <!-- Written / Descriptive Question Response Area -->
+          <div id="attemptWrittenWrap" style="display: none; margin-top: 18px;">
+            <div style="background: rgba(79, 91, 255, 0.08); border: 1px solid rgba(79, 91, 255, 0.25); border-radius: 10px; padding: 12px 16px; margin-bottom: 14px; font-size: 13px; color: var(--text-dim); line-height: 1.5">
+              <b>Written / Subjective Question:</b> You can type your answer directly in the box below, OR write it on paper/copy and upload photo/PDF of your handwritten sheet.
+            </div>
+
+            <!-- Option 1: Type Directly Online -->
+            <div class="field">
+              <label>Option 1: Type Your Response Online (LaTeX Math formulas supported, e.g. $E=mc^2$)</label>
+              <textarea id="attemptWrittenText" rows="6" placeholder="Type your detailed answer or mathematical derivation here…" oninput="Quiz.updateWrittenText(this.value)"></textarea>
+            </div>
+
+            <!-- Option 2: Upload Copy Sheet -->
+            <div class="field" style="margin-top: 14px;">
+              <label>Option 2: Upload Handwritten Answer Sheet (Photo / PDF)</label>
+              <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <input type="file" id="attemptCopyInput" accept="image/*,.pdf" style="display:none;" onchange="Quiz.handleCopyUpload(event)">
+                <button type="button" class="btn secondary sm" onclick="document.getElementById('attemptCopyInput').click()">Upload Answer Sheet</button>
+                <button type="button" class="btn ghost sm" id="attemptCopyRemoveBtn" style="display:none;" onclick="Quiz.removeUploadedCopy()">Remove Uploaded File</button>
+                <span id="attemptCopyStatus" style="font-size: 12.5px; color: var(--text-dim);">No file attached</span>
+              </div>
+              <div id="attemptCopyPreviewWrap" style="display:none; margin-top: 10px; padding: 10px; background: var(--surface-2); border-radius: 8px;">
+                <img id="attemptCopyPreviewImg" src="" style="max-width: 200px; max-height: 150px; border-radius: 6px; display:none;" />
+                <div id="attemptCopyPdfPreview" style="display:none; font-size: 13px; font-weight: 600; color: var(--primary);">Attached PDF Document</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex-between" style="margin-top: 24px; gap: 10px; flex-wrap: wrap;">
+            <div style="display: flex; gap: 8px;">
+              <button class="btn secondary sm" id="clearResponseBtn" onclick="Quiz.clearResponse()" title="Clear response for this question">Clear Response</button>
+              <button class="btn secondary sm" id="markReviewBtn" onclick="Quiz.markForReviewAndNext()" title="Mark question for review and proceed">Mark for Review &amp; Next</button>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn secondary sm" id="prevQuestionBtn" onclick="Quiz.prevQuestion()">← Previous</button>
+              <button class="btn sm" id="nextQuestionBtn" onclick="Quiz.saveAndNext()">Save &amp; Next →</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card qpalette-card">
+          <!-- WebCam Proctoring Feed Box -->
+          <div id="attemptWebcamCard" style="display: none; margin-bottom: 14px; padding: 10px; background: var(--surface-2); border-radius: 10px; border: 1px solid var(--border);">
+            <div class="flex-between" style="margin-bottom: 6px;">
+              <span style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Camera Surveillance</span>
+              <span id="cameraStatusPill" class="badge ok" style="font-size: 10px;">Live Feed</span>
+            </div>
+            <div style="position: relative; width: 100%; aspect-ratio: 4/3; background: #000; border-radius: 8px; overflow: hidden;">
+              <video id="attemptWebcamVideo" autoplay muted playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
+              <canvas id="attemptWebcamCanvas" style="display: none;"></canvas>
+            </div>
+          </div>
+          <div class="flex-between" style="margin-bottom: 12px;">
+            <h4 style="margin: 0; font-size: 15px;">Question Palette</h4>
+            <span class="badge" style="font-size: 11px;">NTA / GATE Standard</span>
+          </div>
+
+          <!-- NTA / GATE Live Status Grid -->
+          <div class="nta-status-grid">
+            <div class="nta-stat-pill answered" title="Questions Answered">
+              <span class="nta-stat-num" id="cntAnswered">0</span>
+              <span class="nta-stat-lbl">Answered</span>
+            </div>
+            <div class="nta-stat-pill not-answered" title="Visited but Not Answered">
+              <span class="nta-stat-num" id="cntNotAnswered">0</span>
+              <span class="nta-stat-lbl">Not Answered</span>
+            </div>
+            <div class="nta-stat-pill review" title="Marked for Review">
+              <span class="nta-stat-num" id="cntReview">0</span>
+              <span class="nta-stat-lbl">Marked Review</span>
+            </div>
+            <div class="nta-stat-pill answered-review" title="Answered &amp; Marked for Review (Evaluated)">
+              <span class="nta-stat-num" id="cntAnsReview">0</span>
+              <span class="nta-stat-lbl">Ans &amp; Review</span>
+            </div>
+            <div class="nta-stat-pill not-visited" title="Not Visited">
+              <span class="nta-stat-num" id="cntNotVisited">0</span>
+              <span class="nta-stat-lbl">Not Visited</span>
+            </div>
+          </div>
+
+          <div class="qnav-grid-wrap" style="max-height: 270px; overflow-y: auto; margin: 12px 0 14px; padding: 2px;">
+            <div class="qnav-grid" id="qnavGrid"></div>
+          </div>
+
+          <div class="legend nta-legend">
+            <span><i class="dot answered"></i> Answered</span>
+            <span><i class="dot not-answered"></i> Not Answered</span>
+            <span><i class="dot review"></i> Review</span>
+            <span><i class="dot answered-review"></i> Ans &amp; Review</span>
+            <span><i class="dot not-visited"></i> Not Visited</span>
+          </div>
+
+          <button class="btn success block" style="margin-top: 18px" onclick="Quiz.confirmSubmit()">Submit Examination</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 6. RESULTS & REVIEW VIEW ================= -->
+    <section class="view" id="view-result">
+      <div class="result-hero">
+        <div class="score-ring" id="scoreRing">
+          <div class="inner">
+            <b id="scorePctText">0%</b>
+            <span style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em">Score</span>
+          </div>
+        </div>
+        <h2 id="resultTitle">Examination Result</h2>
+        <p id="resultScoreDisplay" style="font-size: 16px; font-weight: 600; color: var(--primary-2)"></p>
+      </div>
+
+      <div class="result-stats">
+        <div class="stat"><div class="num" id="rCorrect" style="color: var(--success)">0</div><div class="lbl">Correct</div></div>
+        <div class="stat"><div class="num" id="rWrong" style="color: var(--danger)">0</div><div class="lbl">Incorrect</div></div>
+        <div class="stat"><div class="num" id="rSkipped">0</div><div class="lbl">Skipped</div></div>
+        <div class="stat"><div class="num" id="rTime">0:00</div><div class="lbl">Duration</div></div>
+      </div>
+
+      <div class="flex-between" style="max-width: 720px; margin: 20px auto">
+        <button class="btn secondary" onclick="App.showView('view-student-dash')">← Return to Dashboard</button>
+      </div>
+
+      <h3 style="max-width: 720px; margin: 30px auto 14px; text-align: left">Detailed Answers & Feedback</h3>
+      <div id="reviewArea" style="max-width: 720px; margin: 0 auto"></div>
+    </section>
+
+    <!-- ================= 7. ADMIN DASHBOARD VIEW ================= -->
+    <section class="view" id="view-admin-dash">
+      <!-- Admin 2-Column Workspace with Left-Hand Side Navigation -->
+      <div class="admin-dashboard-layout">
+        <aside class="admin-sidebar">
+          <div class="sidebar-nav-card">
+            <div class="sidebar-nav-header">
+              <span class="sidebar-title">ADMIN CONSOLE</span>
+            </div>
+            <nav class="side-nav-menu" id="adminSideNav">
+              <button class="side-nav-btn active" data-t="overview" onclick="Admin.setTab('overview')">
+                <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg></span>
+                <span class="nav-label">Overview</span>
+              </button>
+              <button class="side-nav-btn" data-t="quizzes" onclick="Admin.setTab('quizzes')">
+                <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg></span>
+                <span class="nav-label">Examinations</span>
+              </button>
+              <button class="side-nav-btn create-exam-btn" data-t="create" onclick="Admin.setTab('create')">
+                <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></span>
+                <span class="nav-label">Create Exam</span>
+              </button>
+              <button class="side-nav-btn" data-t="students" onclick="Admin.setTab('students')">
+                <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></span>
+                <span class="nav-label">Students</span>
+              </button>
+              <button class="side-nav-btn" data-t="evaluation" onclick="Admin.setTab('evaluation')">
+                <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></span>
+                <span class="nav-label">Evaluation</span>
+                <span id="evalPendingBadge" class="badge warning hidden nav-badge">0</span>
+              </button>
+              <button class="side-nav-btn" data-t="results" onclick="Admin.setTab('results')">
+                <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path></svg></span>
+                <span class="nav-label">Results &amp; Leaderboard</span>
+              </button>
+              <button class="side-nav-btn" data-t="alerts" onclick="Admin.setTab('alerts')">
+                <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></span>
+                <span class="nav-label">Surveillance Alerts</span>
+                <span id="alertsBadge" class="badge danger hidden nav-badge">0</span>
+              </button>
+              <button class="side-nav-btn" data-t="reports" onclick="Admin.setTab('reports')">
+                <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg></span>
+                <span class="nav-label">Reports</span>
+              </button>
+              <button class="side-nav-btn" data-t="settings" onclick="Admin.setTab('settings')">
+                <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></span>
+                <span class="nav-label">Settings</span>
+              </button>
+            </nav>
+          </div>
+        </aside>
+
+        <!-- Main Workspace (Selected Tab Content) -->
+        <div class="admin-main-content">
+          <div class="dash-head" style="margin-bottom: 20px;">
+            <div>
+              <h2>Administrator Control Console</h2>
+              <p style="margin: 0; color: var(--text-dim);">Enterprise quiz management, candidate surveillance &amp; academic records</p>
+            </div>
+            <div class="admin-head-status">
+              <span class="badge success" style="padding: 6px 12px; font-size: 12px; font-weight: 600;">● System Active</span>
+            </div>
+          </div>
+
+          <!-- Hidden legacy horizontal tabs for accessibility and backward compatibility -->
+          <div class="tabs hidden" aria-hidden="true">
+            <button class="active" data-t="overview" onclick="Admin.setTab('overview')">Overview</button>
+            <button data-t="quizzes" onclick="Admin.setTab('quizzes')">Examinations</button>
+            <button data-t="create" onclick="Admin.setTab('create')">+ Create Exam</button>
+            <button data-t="students" onclick="Admin.setTab('students')">Students</button>
+            <button data-t="evaluation" onclick="Admin.setTab('evaluation')">Evaluation</button>
+            <button data-t="results" onclick="Admin.setTab('results')">Results &amp; Leaderboard</button>
+            <button data-t="alerts" onclick="Admin.setTab('alerts')">Alerts</button>
+            <button data-t="reports" onclick="Admin.setTab('reports')">Reports</button>
+            <button data-t="settings" onclick="Admin.setTab('settings')">Settings</button>
+          </div>
+
+          <!-- Admin Tab: Overview -->
+          <div id="adminTabOverview">
+            <!-- 5 Live Interactive Stat Cards placed on Overview for clean, focused workspace -->
+            <div class="stat-row" style="margin-bottom: 24px;">
+              <div class="stat" onclick="Admin.setTab('quizzes')" title="Click to view all Examinations" role="button" tabindex="0">
+                <div class="flex-between">
+                  <div class="num" id="statQuizzes">0</div>
+                  <span class="stat-badge">Exams</span>
+                </div>
+                <div class="lbl">Examinations</div>
+                <div class="stat-link-hint">Manage Exams →</div>
+              </div>
+
+              <div class="stat" onclick="Admin.setTab('students')" title="Click to view Registered Students" role="button" tabindex="0">
+                <div class="flex-between">
+                  <div class="num" id="statStudents">0</div>
+                  <span class="stat-badge">Students</span>
+                </div>
+                <div class="lbl">Registered Students</div>
+                <div class="stat-link-hint">Student Accounts →</div>
+              </div>
+
+              <div class="stat" onclick="Admin.setTab('results')" title="Click to view Total Attempts &amp; Leaderboard" role="button" tabindex="0">
+                <div class="flex-between">
+                  <div class="num" id="statAttempts">0</div>
+                  <span class="stat-badge">Attempts</span>
+                </div>
+                <div class="lbl">Total Attempts</div>
+                <div class="stat-link-hint">Exam Records →</div>
+              </div>
+
+              <div class="stat" onclick="Admin.setTab('reports')" title="Click to view Average Score &amp; Performance Analytics" role="button" tabindex="0">
+                <div class="flex-between">
+                  <div class="num" id="statAvgScore">0%</div>
+                  <span class="stat-badge">Performance</span>
+                </div>
+                <div class="lbl">Average Score</div>
+                <div class="stat-link-hint">View Reports →</div>
+              </div>
+
+              <div class="stat" onclick="Admin.setTab('evaluation')" title="Click to view Written Answer Evaluations" role="button" tabindex="0">
+                <div class="flex-between">
+                  <div class="num" id="statEvaluationsPending" style="color: var(--warning)">0</div>
+                  <span class="stat-badge warning">Written</span>
+                </div>
+                <div class="lbl">Pending Evaluations</div>
+                <div class="stat-link-hint" style="color: var(--warning)">Check Answers →</div>
+              </div>
+
+              <div class="stat" onclick="Admin.setTab('alerts')" title="Click to view Active Surveillance Alerts" role="button" tabindex="0">
+                <div class="flex-between">
+                  <div class="num" id="statAlerts" style="color: var(--danger)">0</div>
+                  <span class="stat-badge danger">Alerts</span>
+                </div>
+                <div class="lbl">Active Alerts</div>
+                <div class="stat-link-hint" style="color: var(--danger)">Surveillance Console →</div>
+              </div>
+            </div>
+
+            <!-- Preserved hidden helper badges for JS continuity -->
+            <span id="statPendingResets" style="display: none;">0</span>
+            <span id="reqBadge" style="display: none;">0</span>
+
+            <h4 style="margin-bottom: 12px">Recent Completed Attempts</h4>
+            <div class="table-wrap" style="margin-bottom: 24px">
+              <table id="adminRecentAttemptsTable">
+                <thead>
+                  <tr><th>Candidate</th><th>Exam</th><th>Score</th><th>Proctoring Status</th><th>Date</th></tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+
+      <!-- Admin Tab: Quizzes -->
+      <div id="adminTabQuizzes" class="hidden">
+        <div class="quiz-grid" id="adminQuizGrid"></div>
+      </div>
+
+      <!-- Admin Tab: Create / Edit Quiz -->
+      <div id="adminTabCreate" class="hidden">
+        <div class="card" style="margin-bottom: 20px">
+          <h3 id="quizFormHeading">Create New Examination</h3>
+          <input type="hidden" id="qEditId">
+
+          <div class="field">
+            <label>Examination Title</label>
+            <input id="qTitle" required placeholder="e.g. Advanced Operating Systems Mid-Term">
+          </div>
+
+          <div class="grid-2">
+            <div class="field">
+              <label>Category / Department</label>
+              <input id="qCategory" placeholder="e.g. Computer Science">
+            </div>
+            <div class="field">
+              <label>Duration (Minutes)</label>
+              <input id="qDuration" type="number" min="1" max="360" value="15">
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="field">
+              <label>Marks Per Correct Question</label>
+              <input id="qMarks" type="number" min="0.5" step="0.5" value="1">
+            </div>
+            <div class="field">
+              <label>Negative Marking Penalty</label>
+              <select id="qNegative">
+                <option value="0">Disabled (0 penalty)</option>
+                <option value="0.25">−25% per incorrect answer</option>
+                <option value="0.33">−33% per incorrect answer</option>
+                <option value="0.5">−50% per incorrect answer</option>
+                <option value="0.50" style="display:none">−50% per incorrect answer</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Candidate Instructions (Optional)</label>
+            <textarea id="qInstructions" rows="2" placeholder="e.g. Rough work sheets permitted. No electronic devices."></textarea>
+          </div>
+
+          <div class="grid-2" style="margin-top: 14px;">
+            <div class="field">
+              <label>Branch / Batch Eligibility (ABAC Security Filter)</label>
+              <input id="qEligibility" placeholder="e.g. all (or type 'B.Tech CSE', 'BCA', etc.)" value="all">
+              <div class="field-hint">Enter "all" for open access, or specify branch name to restrict unauthorized candidates.</div>
+            </div>
+            <div class="field">
+              <label>Quick Preset Branch Select</label>
+              <select id="qEligibilitySelect" onchange="if(this.value){document.getElementById('qEligibility').value=this.value}">
+                <option value="">-- Choose Common Preset or Type Custom --</option>
+                <option value="all">All Students (Open Access)</option>
+                <option value="B.Tech">B.Tech (All Branches)</option>
+                <option value="B.Tech Computer Science">B.Tech Computer Science (CSE)</option>
+                <option value="B.Tech Information Technology">B.Tech Information Technology (IT)</option>
+                <option value="BCA">BCA (Bachelor of Computer Applications)</option>
+                <option value="MCA">MCA (Master of Computer Applications)</option>
+                <option value="B.Sc">B.Sc / Science</option>
+                <option value="Diploma">Polytechnic / Diploma</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Scheduled Exam Window Card -->
+          <div style="margin-top: 14px; background: var(--surface-2); border: 1.5px dashed var(--border); border-radius: 12px; padding: 14px 18px;">
+            <div class="flex-between">
+              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin: 0; font-weight: 600;">
+                <input type="checkbox" id="qScheduleEnable" style="width: auto" onchange="Admin.toggleScheduleInputs(this.checked)">
+                <span>Enable Scheduled Exam Window (Date &amp; Time Lock)</span>
+              </label>
+              <span class="badge" id="scheduleNoticeBadge">Disabled (Open Anytime)</span>
+            </div>
+            <div id="qScheduleFields" style="display: none; margin-top: 14px;" class="grid-2">
+              <div class="field">
+                <label>Exam Window Start (Date &amp; Time)</label>
+                <input type="datetime-local" id="qStartTime">
+                <div class="field-hint">Students cannot enter exam before this date &amp; time.</div>
+              </div>
+              <div class="field">
+                <label>Exam Window End / Expiry (Date &amp; Time)</label>
+                <input type="datetime-local" id="qEndTime">
+                <div class="field-hint">Exam automatically closes and link expires after this deadline.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid-2" style="margin-top: 14px;">
+            <div class="field">
+              <label>Written Copy Upload Buffer (Minutes)</label>
+              <input type="number" id="qUploadBuffer" min="0" max="60" value="0" placeholder="e.g. 5 or 10">
+              <div class="field-hint">Extra grace period for students to scan/photo handwritten copies after exam timer ends.</div>
+            </div>
+            <div class="field">
+              <label>Proctoring Security Rules</label>
+              <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 6px;">
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                  <input type="checkbox" id="qRequireWebcam" checked style="width: auto">
+                  <span style="font-size: 13px">Mandatory WebCam &amp; Face Monitoring</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                  <input type="checkbox" id="qRequireFullscreen" checked style="width: auto">
+                  <span style="font-size: 13px">Mandatory Fullscreen (Kiosk Mode Lock)</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin-top: 14px">
+            <input type="checkbox" id="qAllowMultiple" style="width: auto">
+            <span style="font-size: 13.5px">Allow candidates to retake this exam multiple times</span>
+          </label>
+        </div>
+
+        <!-- Bulk Import Card -->
+        <div class="card" style="margin-bottom: 20px">
+          <h4>Bulk Question Import</h4>
+          <p>Import questions automatically via spreadsheet or PDF document:</p>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 8px">
+            <button class="btn secondary sm" onclick="document.getElementById('csvFileInput').click()">⬆ Upload CSV</button>
+            <input type="file" id="csvFileInput" accept=".csv" class="hidden" onchange="Admin.handleCSVUpload(event)">
+            <button class="btn secondary sm" onclick="document.getElementById('pdfFileInput').click()">⬆ Upload PDF</button>
+            <input type="file" id="pdfFileInput" accept=".pdf" class="hidden" onchange="Admin.handlePDFUpload(event)">
+            <button class="btn ghost sm" onclick="Admin.downloadCSVTemplate()">⬇ CSV Template</button>
+            <button class="btn ghost sm" onclick="Admin.downloadSamplePDFFormat()">⬇ Sample PDF Format</button>
+          </div>
+          <div class="field-hint" id="uploadStatus"></div>
+        </div>
+
+        <!-- Dynamic Question Builder -->
+        <div id="qBuilderList"></div>
+        <button class="btn secondary" onclick="Admin.addQuestionBlock()">+ Add Question</button>
+
+        <div class="flex-between" style="margin-top: 24px">
+          <button class="btn ghost" id="cancelQuizEditBtn" onclick="Admin.cancelQuizEdit()">Cancel</button>
+          <button class="btn success" id="saveQuizSubmitBtn" onclick="Admin.saveQuiz()">Save & Publish Examination</button>
+        </div>
+      </div>
+
+      <!-- Admin Tab: Students -->
+      <div id="adminTabStudents" class="hidden">
+        <div class="flex-between" style="margin-bottom: 16px">
+          <div class="toolbar" style="margin-bottom: 0">
+            <input id="studentSearchInput" placeholder="Search by name, ID, or roll number…" oninput="Admin.loadStudents()">
+          </div>
+          <button class="btn success" onclick="Admin.openCreateStudentModal()">+ Create Student Account</button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Candidate Name</th>
+                <th>Student ID</th>
+                <th>Password (Admin)</th>
+                <th>Email</th>
+                <th>Institution</th>
+                <th>Roll No.</th>
+                <th>Status</th>
+                <th>Attempts</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="adminStudentsTbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Admin Tab: Password Reset Requests (Deprecated / Removed from UI) -->
+      <div id="adminTabRequests" class="hidden" style="display:none;" aria-hidden="true">
+        <tbody id="adminRequestsTbody"></tbody>
+      </div>
+
+      <!-- Admin Tab: Written & Subjective Answer Evaluation -->
+      <div id="adminTabEvaluation" class="hidden">
+        <div class="dash-head" style="margin-bottom: 16px;">
+          <div>
+            <h3 style="margin: 0 0 4px;">Subjective &amp; Written Answer Evaluation</h3>
+            <p style="margin: 0; color: var(--text-dim); font-size: 13.5px;">
+              Review student typed answers, inspect uploaded handwritten copies, and award marks online.
+            </p>
+          </div>
+          <button class="btn secondary sm" onclick="Admin.loadEvaluationView()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+            Refresh Queue
+          </button>
+        </div>
+
+        <!-- Evaluation Quick KPI Metric Cards -->
+        <div class="stat-row" style="margin-bottom: 20px;">
+          <div class="stat" style="border-left: 3px solid var(--warning);">
+            <div class="flex-between">
+              <div class="num" id="evalStatPending" style="color: var(--warning)">0</div>
+              <span class="stat-badge warning">Pending</span>
+            </div>
+            <div class="lbl">Pending Checking</div>
+          </div>
+          <div class="stat" style="border-left: 3px solid var(--success);">
+            <div class="flex-between">
+              <div class="num" id="evalStatEvaluated" style="color: var(--success)">0</div>
+              <span class="stat-badge success">Graded</span>
+            </div>
+            <div class="lbl">Evaluated Submissions</div>
+          </div>
+          <div class="stat" style="border-left: 3px solid var(--primary-2);">
+            <div class="flex-between">
+              <div class="num" id="evalStatTotal">0</div>
+              <span class="stat-badge">Total</span>
+            </div>
+            <div class="lbl">Total Written Copies</div>
+          </div>
+        </div>
+
+        <div class="toolbar" style="gap: 10px; flex-wrap: wrap; margin-bottom: 16px;">
+          <div class="field" style="margin: 0; min-width: 220px;">
+            <select id="evalQuizSelect" onchange="Admin.renderEvaluationTable()"></select>
+          </div>
+          <div class="field" style="margin: 0; min-width: 170px;">
+            <select id="evalStatusSelect" onchange="Admin.renderEvaluationTable()">
+              <option value="all">All Submissions</option>
+              <option value="pending">Pending Checking Only</option>
+              <option value="evaluated">Evaluated Only</option>
+            </select>
+          </div>
+          <div class="field" style="margin: 0; flex: 1; min-width: 200px;">
+            <input type="search" id="evalSearchInput" placeholder="Filter by student name or ID..." oninput="Admin.filterEvaluationTable()">
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Candidate</th>
+                <th>Examination</th>
+                <th>Written Questions</th>
+                <th>Uploaded Copy</th>
+                <th>Current Score</th>
+                <th>Status</th>
+                <th>Date Submitted</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="adminEvaluationTbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Admin Tab: Results & Leaderboard -->
+      <div id="adminTabResults" class="hidden">
+        <div class="dash-head" style="margin-bottom: 16px;">
+          <div>
+            <h3 style="margin: 0 0 4px;">Examination Results &amp; Speed Leaderboard</h3>
+            <p style="margin: 0; color: var(--text-dim); font-size: 13.5px;">
+              Comprehensive academic rankings, performance breakdown, and fastest completion tracking.
+            </p>
+          </div>
+          <button class="btn secondary sm" id="exportResultsBtn" onclick="Admin.exportResultsCSV()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            Export to CSV / Excel
+          </button>
+        </div>
+
+        <div class="toolbar" style="margin-bottom: 16px;">
+          <select id="resultsQuizSelect" onchange="Admin.renderResultsTable()"></select>
+        </div>
+
+        <!-- Leaderboard Speed & Performance Highlight Cards -->
+        <div class="stat-row" id="leaderboardHighlightsRow" style="margin-bottom: 20px;">
+          <!-- Fastest Solver Highlight Card -->
+          <div class="stat" style="border-left: 3px solid var(--accent); background: linear-gradient(135deg, rgba(56, 189, 248, 0.08), var(--surface));">
+            <div class="flex-between">
+              <span class="stat-badge" style="background: rgba(56, 189, 248, 0.2); color: var(--accent); font-weight: 700;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;margin-right:3px"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>Fastest Solver
+              </span>
+              <span id="leadFastestTime" style="font-size: 13px; font-weight: 700; color: var(--accent);">-</span>
+            </div>
+            <div class="num" id="leadFastestStudent" style="font-size: 18px; margin: 8px 0 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">-</div>
+            <div class="lbl" id="leadFastestDetail">Quickest Submission</div>
+          </div>
+
+          <!-- Top Ranker Highlight Card -->
+          <div class="stat" style="border-left: 3px solid var(--success); background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), var(--surface));">
+            <div class="flex-between">
+              <span class="stat-badge success">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;margin-right:3px"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.45 1-1 1H7v4h10v-4h-2c-.55 0-1-.45-1-1v-2.34"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path></svg>Top Ranker (#1)
+              </span>
+              <span id="leadTopScore" style="font-size: 13px; font-weight: 700; color: var(--success);">-</span>
+            </div>
+            <div class="num" id="leadTopStudent" style="font-size: 18px; margin: 8px 0 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">-</div>
+            <div class="lbl">Highest Scorer</div>
+          </div>
+
+          <!-- Total Candidates Attempted -->
+          <div class="stat">
+            <div class="flex-between">
+              <div class="num" id="leadTotalAttempts">0</div>
+              <span class="stat-badge">Attempts</span>
+            </div>
+            <div class="lbl">Total Submissions</div>
+          </div>
+
+          <!-- Average Completion Time -->
+          <div class="stat">
+            <div class="flex-between">
+              <div class="num" id="leadAvgTime" style="font-size: 20px;">-</div>
+              <span class="stat-badge">Speed</span>
+            </div>
+            <div class="lbl">Average Time Taken</div>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Candidate</th>
+                <th>Course / Roll</th>
+                <th>Score</th>
+                <th>Percentage</th>
+                <th>Speed / Duration</th>
+                <th>Proctoring</th>
+                <th>Date Submitted</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="adminResultsTbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Admin Tab: Cheating Alerts -->
+      <div id="adminTabAlerts" class="hidden">
+        <h4 style="margin-bottom: 8px">Live Anti-Cheating Surveillance Log</h4>
+        <p>Real-time detection events logged whenever a candidate loses focus, switches browser tabs, exits fullscreen, or covers webcam.</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Candidate</th>
+                <th>Examination</th>
+                <th>Violation Type</th>
+                <th>Frequency</th>
+                <th>Evidence Photo</th>
+                <th>First Detected</th>
+                <th>Last Active</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="adminAlertsTbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Admin Tab: Reports & Analytics -->
+      <div id="adminTabReports" class="hidden">
+        <h4>Examination Performance Breakdown</h4>
+        <div class="table-wrap" style="margin-bottom: 24px" id="reportQuizPerformanceTable">
+          <table>
+            <thead>
+              <tr><th>Examination</th><th>Category</th><th>Attempts</th><th>Avg Score</th><th>Pass Rate</th><th>Top Score</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <h4>Score Distribution Bands</h4>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 14px">
+              <div class="flex-between"><span>Excellent (≥90%):</span><b id="rbExcellent">0</b></div>
+              <div class="flex-between"><span>Good (75%–89%):</span><b id="rbGood">0</b></div>
+              <div class="flex-between"><span>Average (50%–74%):</span><b id="rbAverage">0</b></div>
+              <div class="flex-between"><span>Needs Improvement (&lt;50%):</span><b id="rbNeedsImprovement">0</b></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h4>Top Performing Candidates</h4>
+            <div class="table-wrap" style="max-height: 220px; overflow-y: auto" id="reportTopPerformersTable">
+              <table>
+                <thead><tr><th>#</th><th>Student</th><th>Exams</th><th>Avg %</th><th>Best</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Admin Tab: Settings -->
+      <div id="adminTabSettings" class="hidden">
+        <div class="dash-head" style="margin-bottom: 20px;">
+          <div>
+            <h3 style="margin: 0 0 4px;">System Settings &amp; Administration</h3>
+            <p style="margin: 0; font-size: 13px; color: var(--text-dim);">Configure administrative access, colleges &amp; institutions, and monitor system security logs</p>
+          </div>
+        </div>
+
+        <!-- 1. Administrators Management Card (Spacious & Clean) -->
+        <div class="card" id="settingsAdminsCard" style="margin-bottom: 22px;">
+          <div class="flex-between" style="border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 16px;">
+            <div>
+              <h4 style="margin: 0 0 2px;">
+                System Administrators
+              </h4>
+              <p style="margin: 0; font-size: 12.5px; color: var(--text-dim);">Authorized administrator logins with management privileges</p>
+            </div>
+            <button class="btn sm" id="btnToggleAddAdmin" onclick="Admin.toggleInlineAddAdmin()">+ Add Administrator</button>
+          </div>
+
+          <!-- Inline Add Admin Form Drawer (Complete Faculty & Teacher Details) -->
+          <div id="inlineAddAdminBox" class="inline-admin-form" style="display: none; background: var(--surface-2); border: 1.5px solid var(--primary); border-radius: 16px; padding: 22px; margin-bottom: 24px;">
+            <div class="flex-between" style="margin-bottom: 16px; border-bottom: 1px dashed var(--border); padding-bottom: 10px;">
+              <div>
+                <h4 style="margin: 0 0 2px;">
+                  Onboard Faculty Administrator / Teacher
+                </h4>
+                <p style="margin: 0; font-size: 12.5px; color: var(--text-dim);">Register institutional faculty credentials with full academic and departmental profile</p>
+              </div>
+              <button type="button" class="close-btn" onclick="Admin.toggleInlineAddAdmin(false)">&times;</button>
+            </div>
+
+            <div id="inlineAddAdminMsg" class="msg"></div>
+            
+            <form id="inlineAddAdminForm" onsubmit="return Admin.handleInlineAddAdmin(event)">
+              <!-- Section 1: Official College / Faculty Identification -->
+              <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--accent); letter-spacing: 0.05em; margin-bottom: 10px;">
+                Institutional &amp; Employment Profile
+              </div>
+
+              <div class="grid-2">
+                <div class="field">
+                  <label>Teacher / Faculty Full Name *</label>
+                  <input id="inlineAdminName" required placeholder="e.g. Dr. Rajesh Kumar Sharma">
+                </div>
+                <div class="field">
+                  <label>Employee Code / Faculty ID *</label>
+                  <input id="inlineAdminEmployeeId" required placeholder="e.g. FAC2026042 or EMP-CS-101">
+                </div>
+              </div>
+
+              <div class="grid-2">
+                <div class="field">
+                  <label>Academic Designation / Post *</label>
+                  <select id="inlineAdminDesignation" required>
+                    <option value="Assistant Professor">Assistant Professor</option>
+                    <option value="Associate Professor">Associate Professor</option>
+                    <option value="Professor">Professor</option>
+                    <option value="Head of Department (HOD)">Head of Department (HOD)</option>
+                    <option value="Senior Lecturer">Senior Lecturer</option>
+                    <option value="Lecturer">Lecturer</option>
+                    <option value="Examination Controller">Examination Controller</option>
+                    <option value="Dean / Academic Director">Dean / Academic Director</option>
+                    <option value="Lab In-charge / Instructor">Lab In-charge / Instructor</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Department / Discipline *</label>
+                  <input id="inlineAdminDepartment" required placeholder="e.g. Computer Science &amp; Engineering">
+                </div>
+              </div>
+
+              <div class="grid-2">
+                <div class="field">
+                  <label>College / Institution Name *</label>
+                  <input id="inlineAdminCollege" list="adminCollegeSuggestions" required placeholder="e.g. BBS Group of Institutions">
+                  <datalist id="adminCollegeSuggestions"></datalist>
+                </div>
+                <div class="field">
+                  <label>Highest Qualification / Degree</label>
+                  <input id="inlineAdminQualification" placeholder="e.g. Ph.D. (CSE), M.Tech, M.Sc">
+                </div>
+              </div>
+
+              <!-- Section 2: Contact Information -->
+              <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--accent); letter-spacing: 0.05em; margin: 14px 0 10px;">
+                Contact &amp; Communication
+              </div>
+
+              <div class="grid-2">
+                <div class="field">
+                  <label>Official Institutional Email Address</label>
+                  <input type="email" id="inlineAdminEmail" placeholder="e.g. rajesh.sharma@college.edu">
+                </div>
+                <div class="field">
+                  <label>Mobile / Contact Phone</label>
+                  <input type="tel" id="inlineAdminPhone" placeholder="e.g. +91 9876543210">
+                </div>
+              </div>
+
+              <!-- Section 3: Portal Credentials -->
+              <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--accent); letter-spacing: 0.05em; margin: 14px 0 10px;">
+                Portal Login Credentials
+              </div>
+
+              <div class="grid-2">
+                <div class="field">
+                  <label>Portal Login Username *</label>
+                  <input id="inlineAdminUsername" required placeholder="e.g. rajesh.cs or employee ID">
+                  <div class="field-hint">Teacher can log in using either this username, email, or Employee ID</div>
+                </div>
+                <div class="field">
+                  <div class="flex-between">
+                    <label>Initial Password (min 6 chars) *</label>
+                    <button type="button" class="btn ghost sm" style="padding: 2px 8px; font-size: 11px; height: auto;" onclick="Admin.suggestFacultyPassword()" title="Suggest strong password">Suggest</button>
+                  </div>
+                  <input type="text" id="inlineAdminPassword" required minlength="6" placeholder="Create or suggest password">
+                </div>
+              </div>
+
+              <div class="flex-between" style="margin-top: 18px; border-top: 1px solid var(--border); padding-top: 14px;">
+                <button class="btn ghost sm" type="button" onclick="Admin.toggleInlineAddAdmin(false)">Cancel</button>
+                <button class="btn success" type="submit">Register &amp; Create Faculty Administrator</button>
+              </div>
+            </form>
+          </div>
+
+          <div id="settingsAdminsList"></div>
+        </div>
+
+        <!-- 2. Institutions & Affiliated Colleges Card -->
+        <div class="card" style="margin-bottom: 22px;">
+          <div class="flex-between" style="border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 16px;">
+            <div>
+              <h4 style="margin: 0 0 2px;">
+                Institutions &amp; Colleges
+              </h4>
+              <p style="margin: 0; font-size: 12.5px; color: var(--text-dim);">Colleges and institutes selectable when enrolling student accounts</p>
+            </div>
+          </div>
+
+          <div style="background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 18px;">
+            <div style="font-size: 13px; font-weight: 600; margin-bottom: 10px;">Add New College / Institution</div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+              <input id="newCollegeName" style="flex: 2; min-width: 200px;" placeholder="Institution Name (e.g. BBS Group of Institutions)">
+              <input id="newCollegeDomain" style="flex: 1; min-width: 150px;" placeholder="Domain (e.g. college.edu)">
+              <button class="btn success sm" onclick="Admin.addCollege()">+ Add College</button>
+            </div>
+          </div>
+
+          <div id="settingsCollegesList"></div>
+        </div>
+
+        <!-- 3. System Audit Logs Card -->
+        <div class="card">
+          <div class="flex-between" style="border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 16px;">
+            <div>
+              <h4 style="margin: 0 0 2px;">
+                System Audit Logs &amp; Activity Trail
+              </h4>
+              <p style="margin: 0; font-size: 12.5px; color: var(--text-dim);">Tamper-evident logs of administrative actions, logins, and exam submissions</p>
+            </div>
+            <button class="btn secondary sm" onclick="Admin.loadAuditLogs()">↻ Refresh Logs</button>
+          </div>
+          <div class="table-wrap" style="max-height: 340px; overflow-y: auto" id="settingsAuditTable">
+            <table>
+              <thead><tr><th>Type</th><th>Action</th><th>Details</th><th>IP Address</th><th>Timestamp</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+        </div><!-- /.admin-main-content -->
+      </div><!-- /.admin-dashboard-layout -->
+    </section>
+
+  </main>
+
+  <!-- ================= MODALS ================= -->
+
+  <!-- Modal: Forgot Password Request -->
+  <div class="modal-overlay" id="forgotModal">
+    <div class="modal">
+      <div class="modal-head">
+        <h3>Reset Password Request</h3>
+        <button class="close-btn" onclick="App.closeModal('forgotModal')">&times;</button>
+      </div>
+      <p>Submit a password reset request to your institution administrator.</p>
+      <div id="forgotMsg" class="msg"></div>
+      <form id="forgotForm" onsubmit="return Auth.handleForgotPassword(event)">
+        <div class="field">
+          <label>Student ID or Registered Email</label>
+          <input id="forgotIdentifier" required placeholder="e.g. STU2026001 or you@example.com">
+        </div>
+        <div class="field">
+          <label>Reason / Contact Phone (Optional)</label>
+          <input id="forgotReason" placeholder="e.g. Forgot initial password, Contact: 9876543210">
+        </div>
+        <div class="flex-between" style="margin-top: 18px">
+          <button class="btn ghost" type="button" onclick="App.closeModal('forgotModal')">Cancel</button>
+          <button class="btn" type="submit" id="forgotSubmitBtn">Submit Reset Request</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: First Login Mandatory Password Change -->
+  <div class="modal-overlay" id="firstLoginModal" style="backdrop-filter: blur(8px);">
+    <div class="modal" style="max-width: 520px; border: 2px solid var(--primary);">
+      <div class="modal-head" style="border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 16px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--primary);"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          <div>
+            <h3 style="margin: 0; font-size: 18px;">Mandatory First-Time Password Setup</h3>
+            <span style="font-size: 12px; color: var(--text-dim);">Candidate Security Compliance</span>
+          </div>
+        </div>
+      </div>
+      
+      <div style="background: rgba(79, 91, 255, 0.1); border: 1px solid rgba(79, 91, 255, 0.25); border-radius: 8px; padding: 12px; margin-bottom: 16px; font-size: 13px; line-height: 1.5;">
+        <b>Welcome to QuizNest!</b> Your account was provisioned by your administrator with an initial password. For your security, you <b>must change your password now</b> before continuing to your dashboard and examinations.
+      </div>
+
+      <div id="firstLoginMsg" class="msg"></div>
+      <form id="firstLoginForm" onsubmit="return Student.handleFirstLoginPasswordChange(event)">
+        <div class="field">
+          <label for="firstCurPass">Current Administrator-Assigned Password</label>
+          <div class="password-field-wrap">
+            <input type="password" id="firstCurPass" required placeholder="Enter temporary password given by admin">
+            <button type="button" class="password-toggle-btn" onclick="Landing.togglePasswordVisibility('firstCurPass', this)" title="Show password" aria-label="Show password"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-svg eye-closed" style="vertical-align:middle;display:inline-block;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg></button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="firstNewPass">New Confidential Password (min 6 characters)</label>
+          <div class="password-field-wrap">
+            <input type="password" id="firstNewPass" required minlength="6" placeholder="Create strong personal password">
+            <button type="button" class="password-toggle-btn" onclick="Landing.togglePasswordVisibility('firstNewPass', this)" title="Show password" aria-label="Show password"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-svg eye-closed" style="vertical-align:middle;display:inline-block;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg></button>
+          </div>
+          <div class="field-hint">Must contain at least 6 characters (letters and numbers)</div>
+        </div>
+
+        <div class="field">
+          <label for="firstConfPass">Confirm New Confidential Password</label>
+          <div class="password-field-wrap">
+            <input type="password" id="firstConfPass" required minlength="6" placeholder="Confirm new personal password">
+            <button type="button" class="password-toggle-btn" onclick="Landing.togglePasswordVisibility('firstConfPass', this)" title="Show password" aria-label="Show password"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-svg eye-closed" style="vertical-align:middle;display:inline-block;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg></button>
+          </div>
+        </div>
+
+        <div class="flex-between" style="margin-top: 20px;">
+          <button class="btn ghost" type="button" onclick="App.logout()">Log Out &amp; Cancel</button>
+          <button class="btn btn-glow" type="submit" id="firstLoginSubmitBtn">Save Password &amp; Continue →</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Change Password -->
+  <div class="modal-overlay" id="changePassModal">
+    <div class="modal">
+      <div class="modal-head">
+        <h3>Change Password</h3>
+        <button class="close-btn" onclick="App.closeModal('changePassModal')">&times;</button>
+      </div>
+      <div id="changePassMsg" class="msg"></div>
+      <form id="changePassForm" onsubmit="return Auth.handleChangePassword(event)">
+        <div class="field">
+          <label>Current Password</label>
+          <div class="password-field-wrap">
+            <input type="password" id="currentPassword" required placeholder="••••••••">
+            <button type="button" class="password-toggle-btn" onclick="Landing.togglePasswordVisibility('currentPassword', this)" title="Show password" aria-label="Show password"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-svg eye-closed" style="vertical-align:middle;display:inline-block;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg></button>
+          </div>
+        </div>
+        <div class="field">
+          <label>New Password (min 6 characters)</label>
+          <div class="password-field-wrap">
+            <input type="password" id="newPassword" required minlength="6" placeholder="••••••••">
+            <button type="button" class="password-toggle-btn" onclick="Landing.togglePasswordVisibility('newPassword', this)" title="Show password" aria-label="Show password"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-svg eye-closed" style="vertical-align:middle;display:inline-block;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg></button>
+          </div>
+        </div>
+        <div class="field">
+          <label>Confirm New Password</label>
+          <div class="password-field-wrap">
+            <input type="password" id="confirmPassword" required minlength="6" placeholder="••••••••">
+            <button type="button" class="password-toggle-btn" onclick="Landing.togglePasswordVisibility('confirmPassword', this)" title="Show password" aria-label="Show password"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-svg eye-closed" style="vertical-align:middle;display:inline-block;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg></button>
+          </div>
+        </div>
+        <div class="flex-between" style="margin-top: 18px">
+          <button class="btn ghost" type="button" onclick="App.closeModal('changePassModal')">Cancel</button>
+          <button class="btn" type="submit">Update Password</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Confirm Submit Quiz -->
+  <div class="modal-overlay" id="confirmModal">
+    <div class="modal">
+      <h3>Submit Examination?</h3>
+      <p id="confirmModalText">Are you sure you want to finish and submit your answers?</p>
+      <div class="flex-between" style="margin-top: 20px">
+        <button class="btn ghost" onclick="App.closeModal('confirmModal')">Return to Exam</button>
+        <button class="btn success" onclick="Quiz.submit()">Yes, Final Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Create Student Account (Admin Only) -->
+  <div class="modal-overlay" id="createStudentModal">
+    <div class="modal" style="max-width: 600px">
+      <div class="modal-head">
+        <h3>Create Student Account</h3>
+        <button class="close-btn" onclick="App.closeModal('createStudentModal')">&times;</button>
+      </div>
+      <p>Only administrators can provision student credentials. Student self-registration is permanently disabled.</p>
+      <div id="createStudentMsg" class="msg"></div>
+      <form id="createStudentForm" onsubmit="return Admin.handleCreateStudent(event)">
+        <div style="background: rgba(79, 91, 255, 0.08); border: 1px solid rgba(79, 91, 255, 0.25); border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; font-size: 13.5px; display: flex; align-items: center; justify-content: space-between;">
+          <div>
+            <span><b>Student ID (Institution Code):</b> </span>
+            <code id="csStudentIdPreview" style="color: var(--primary); font-size: 14px; font-weight: 700; margin-left: 6px;">Auto-generated by system</code>
+          </div>
+          <span class="badge" style="background: var(--primary); color: white; font-size: 11px;">100% Automatic</span>
+        </div>
+
+        <div class="field">
+          <label>Student Full Name *</label>
+          <input id="csName" required placeholder="Enter student's full name">
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <div class="flex-between">
+              <label>Initial Password (min 6 chars) *</label>
+              <button type="button" class="btn ghost sm" style="padding: 2px 8px; font-size: 11px; height: auto;" onclick="Admin.suggestPassword()" title="Suggest strong password">Suggest</button>
+            </div>
+            <input type="text" id="csPassword" required minlength="6" placeholder="Set or suggest password">
+          </div>
+          <div class="field">
+            <label>Email Address (Optional)</label>
+            <input type="email" id="csEmail" placeholder="student@example.com">
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <label>Phone Number (Optional)</label>
+            <input type="tel" id="csPhone" placeholder="Mobile Number">
+          </div>
+          <div class="field">
+            <label>College / Institution</label>
+            <input id="csCollege" placeholder="e.g. Demo Institute of Technology">
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <label>Roll Number</label>
+            <input id="csRoll" placeholder="e.g. 21CS046">
+          </div>
+          <div class="field">
+            <label>Academic Year</label>
+            <input id="csYear" placeholder="e.g. 2nd Year">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Course / Branch</label>
+          <input id="csCourse" placeholder="e.g. B.Tech Computer Science">
+        </div>
+
+        <div class="flex-between" style="margin-top: 18px">
+          <button class="btn ghost" type="button" onclick="App.closeModal('createStudentModal')">Cancel</button>
+          <button class="btn success" type="submit">Create Account</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Edit Student -->
+  <div class="modal-overlay" id="editStudentModal">
+    <div class="modal" style="max-width: 600px">
+      <div class="modal-head">
+        <h3>Edit Student Account</h3>
+        <button class="close-btn" onclick="App.closeModal('editStudentModal')">&times;</button>
+      </div>
+      <div id="editStudentMsg" class="msg"></div>
+      <form id="editStudentForm" onsubmit="return Admin.handleEditStudent(event)">
+        <div class="grid-2">
+          <div class="field">
+            <label>Student ID</label>
+            <input id="esStudentId" readonly disabled style="opacity:0.7">
+          </div>
+          <div class="field">
+            <label>Full Name</label>
+            <input id="esName" required>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label>Email</label>
+            <input type="email" id="esEmail">
+          </div>
+          <div class="field">
+            <label>Phone</label>
+            <input type="tel" id="esPhone">
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label>College</label>
+            <input id="esCollege">
+          </div>
+          <div class="field">
+            <label>Roll Number</label>
+            <input id="esRoll">
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label>Course / Branch</label>
+            <input id="esCourse">
+          </div>
+          <div class="field">
+            <label>Academic Year</label>
+            <input id="esYear">
+          </div>
+        </div>
+        <div class="field">
+          <label>Account Status</label>
+          <select id="esStatus">
+            <option value="1">Active / Enabled</option>
+            <option value="0">Disabled / Suspended</option>
+          </select>
+        </div>
+        <div class="flex-between" style="margin-top: 18px">
+          <button class="btn ghost" type="button" onclick="App.closeModal('editStudentModal')">Cancel</button>
+          <button class="btn" type="submit">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Admin Direct Reset Student Password -->
+  <div class="modal-overlay" id="adminResetPassModal">
+    <div class="modal">
+      <div class="modal-head">
+        <h3>Reset Student Password</h3>
+        <button class="close-btn" onclick="App.closeModal('adminResetPassModal')">&times;</button>
+      </div>
+      <p>Set a new password for <b id="adminResetName">Student</b>.</p>
+      <div id="adminResetMsg" class="msg"></div>
+      <form onsubmit="return Admin.handleAdminResetPassword(event)">
+        <div class="field">
+          <label>New Password (min 6 chars)</label>
+          <input type="text" id="adminNewPassword" required minlength="6" placeholder="Enter new password">
+        </div>
+        <div class="flex-between" style="margin-top: 18px">
+          <button class="btn ghost" type="button" onclick="App.closeModal('adminResetPassModal')">Cancel</button>
+          <button class="btn success" type="submit">Set New Password</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Approve Password Reset Request -->
+  <div class="modal-overlay" id="approveResetModal">
+    <div class="modal">
+      <div class="modal-head">
+        <h3>Approve Password Reset</h3>
+        <button class="close-btn" onclick="App.closeModal('approveResetModal')">&times;</button>
+      </div>
+      <p>Set a new password for <b id="approveResetStudentName">Student</b> upon approval.</p>
+      <div id="approveResetMsg" class="msg"></div>
+      <form onsubmit="return Admin.handleApproveReset(event)">
+        <div class="field">
+          <label>New Password (min 6 chars)</label>
+          <input type="text" id="approveNewPassword" required minlength="6" placeholder="Set temporary or new password">
+        </div>
+        <div class="flex-between" style="margin-top: 18px">
+          <button class="btn ghost" type="button" onclick="App.closeModal('approveResetModal')">Cancel</button>
+          <button class="btn success" type="submit">Approve & Reset</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: View Student Full Profile -->
+  <div class="modal-overlay" id="viewStudentModal">
+    <div class="modal" style="max-width: 650px">
+      <div class="modal-head">
+        <h3>Candidate Academic File</h3>
+        <button class="close-btn" onclick="App.closeModal('viewStudentModal')">&times;</button>
+      </div>
+      <div id="viewStudentInfo"></div>
+      <button class="btn secondary block" onclick="App.closeModal('viewStudentModal')">Close</button>
+    </div>
+  </div>
+
+  <!-- Modal: Add Admin Account -->
+  <div class="modal-overlay" id="addAdminModal">
+    <div class="modal" style="max-width: 620px;">
+      <div class="modal-head">
+        <h3>Onboard Faculty Administrator</h3>
+        <button class="close-btn" onclick="App.closeModal('addAdminModal')">&times;</button>
+      </div>
+      <div id="addAdminMsg" class="msg"></div>
+      <form id="addAdminForm" onsubmit="return Admin.handleAddAdmin(event)">
+        <div class="grid-2">
+          <div class="field">
+            <label>Teacher / Faculty Full Name *</label>
+            <input id="newAdminName" required placeholder="e.g. Dr. Rajesh Kumar Sharma">
+          </div>
+          <div class="field">
+            <label>Employee Code / Faculty ID *</label>
+            <input id="newAdminEmployeeId" required placeholder="e.g. FAC2026042">
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <label>Academic Designation / Post *</label>
+            <select id="newAdminDesignation" required>
+              <option value="Assistant Professor">Assistant Professor</option>
+              <option value="Associate Professor">Associate Professor</option>
+              <option value="Professor">Professor</option>
+              <option value="Head of Department (HOD)">Head of Department (HOD)</option>
+              <option value="Senior Lecturer">Senior Lecturer</option>
+              <option value="Lecturer">Lecturer</option>
+              <option value="Examination Controller">Examination Controller</option>
+              <option value="Dean / Academic Director">Dean / Academic Director</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Department / Discipline *</label>
+            <input id="newAdminDepartment" required placeholder="e.g. Computer Science & Engineering">
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <label>College / Institution Name *</label>
+            <input id="newAdminCollege" list="adminCollegeSuggestions" required placeholder="e.g. BBS Group of Institutions">
+          </div>
+          <div class="field">
+            <label>Highest Qualification</label>
+            <input id="newAdminQualification" placeholder="e.g. Ph.D., M.Tech">
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <label>Institutional Email</label>
+            <input type="email" id="newAdminEmail" placeholder="rajesh@college.edu">
+          </div>
+          <div class="field">
+            <label>Contact Phone</label>
+            <input type="tel" id="newAdminPhone" placeholder="+91 9876543210">
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <label>Portal Login Username *</label>
+            <input id="newAdminUsername" required placeholder="e.g. rajesh.cs">
+          </div>
+          <div class="field">
+            <label>Password (min 6 chars) *</label>
+            <input type="password" id="newAdminPassword" required minlength="6" placeholder="••••••••">
+          </div>
+        </div>
+
+        <div class="flex-between" style="margin-top: 18px">
+          <button class="btn ghost" type="button" onclick="App.closeModal('addAdminModal')">Cancel</button>
+          <button class="btn success" type="submit">Create Faculty Admin</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Examiner Manual Evaluation Modal for Written/Subjective Exams -->
+  <div class="modal-overlay" id="evaluationModal">
+    <div class="modal" style="max-width: 860px; width: 95%; max-height: 90vh; display: flex; flex-direction: column; position: relative; margin: auto;">
+      <div class="modal-head">
+        <div>
+          <h3 style="margin: 0 0 4px;">Examiner Manual Evaluation Portal</h3>
+          <p id="evalModalSub" style="margin: 0; font-size: 13px; color: var(--text-dim);">Checking Written / Subjective Question Answers</p>
+        </div>
+        <button class="close-btn" type="button" onclick="App.closeModal('evaluationModal')">&times;</button>
+      </div>
+
+      <div id="evalModalBody" style="flex: 1; overflow-y: auto; padding: 6px 0; margin: 12px 0;">
+        <!-- Dynamically rendered by Admin.openEvaluationModal -->
+      </div>
+
+      <div class="flex-between" style="border-top: 1px solid var(--border); padding-top: 14px; margin-top: 10px;">
+        <button class="btn ghost" type="button" onclick="App.closeModal('evaluationModal')">Close Without Saving</button>
+        <button class="btn success" type="button" id="saveEvaluationBtn" onclick="Admin.submitEvaluation()">Save &amp; Finalize Evaluation</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Evidence Snapshot Viewer Modal -->
+  <div class="modal-overlay" id="snapshotModal">
+    <div class="modal" style="max-width: 520px; text-align: center;">
+      <div class="modal-head">
+        <h3 style="margin: 0;">Proctoring Evidence Snapshot</h3>
+        <button class="close-btn" onclick="App.closeModal('snapshotModal')">&times;</button>
+      </div>
+      <div style="margin: 16px 0;">
+        <img id="snapshotModalImg" src="" alt="Proctoring Evidence" style="max-width: 100%; border-radius: 8px; border: 1px solid var(--border);" />
+      </div>
+      <button class="btn secondary sm" onclick="App.closeModal('snapshotModal')">Close</button>
+    </div>
+  </div>
+
+  <!-- Fullscreen Violation Warning Modal -->
+  <div class="modal-overlay" id="fullscreenWarningModal">
+    <div class="modal" style="max-width: 460px; text-align: center;">
+      <div style="font-size: 2.5rem; margin-bottom: 8px; color: #ef4444;">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+      </div>
+      <h3 style="color: #ef4444; margin: 0 0 8px;">Fullscreen Mode Violation</h3>
+      <p style="color: var(--text-dim); line-height: 1.5; font-size: 13.5px; margin-bottom: 20px;">
+        You exited Fullscreen mode. This examination requires mandatory Kiosk Fullscreen mode.
+        This event has been logged to the invigilator's surveillance dashboard.
+      </p>
+      <button class="btn primary block" onclick="Quiz.reEnterFullscreen()">Re-Enter Fullscreen &amp; Continue</button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    QuizNest &copy; 2026 – Production-Ready Online Examination Management System. All calculations validated server-side.
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/js/tilt3d.js"></script>
+  <script src="/js/app.js"></script>
+  <script src="/js/landing.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/student.js"></script>
+  <script src="/js/quiz.js"></script>
+  <script src="/js/admin.js"></script>
+
+</body>
+</html>
